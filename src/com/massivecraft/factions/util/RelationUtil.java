@@ -1,14 +1,14 @@
-package com.massivecraft.factions.util;
+package com.massivecraft.guilds.util;
 
 import org.bukkit.ChatColor;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.iface.RelationParticipator;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.iface.RelationParticipator;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 public class RelationUtil
 {
@@ -21,21 +21,21 @@ public class RelationUtil
 			return "A server admin";
 		}
 		
-		Faction thatFaction = getFaction(that);
-		if (thatFaction == null) return "ERROR"; // ERROR
+		guild thatguild = getguild(that);
+		if (thatguild == null) return "ERROR"; // ERROR
 
-		Faction myFaction = getFaction(me);
-//		if (myFaction == null) return thatFaction.getTag(); // no relation, but can show basic name or tag
+		guild myguild = getguild(me);
+//		if (myguild == null) return thatguild.getTag(); // no relation, but can show basic name or tag
 
-		if (that instanceof Faction)
+		if (that instanceof guild)
 		{
-			if (me instanceof FPlayer && myFaction == thatFaction)
+			if (me instanceof FPlayer && myguild == thatguild)
 			{
-				ret = "your faction";
+				ret = "your guild";
 			}
 			else
 			{
-				ret = thatFaction.getTag();
+				ret = thatguild.getTag();
 			}
 		}
 		else if (that instanceof FPlayer)
@@ -45,7 +45,7 @@ public class RelationUtil
 			{
 				ret = "you";
 			}
-			else if (thatFaction == myFaction)
+			else if (thatguild == myguild)
 			{
 				ret = fplayerthat.getNameAndTitle();
 			}
@@ -77,34 +77,34 @@ public class RelationUtil
 	{
 		Rel ret = null;
 		
-		Faction myFaction = getFaction(me);
-		if (myFaction == null) return Rel.NEUTRAL; // ERROR
+		guild myguild = getguild(me);
+		if (myguild == null) return Rel.NEUTRAL; // ERROR
 
-		Faction thatFaction = getFaction(that);
-		if (thatFaction == null) return Rel.NEUTRAL; // ERROR
+		guild thatguild = getguild(that);
+		if (thatguild == null) return Rel.NEUTRAL; // ERROR
 		
-		// The faction with the lowest wish "wins"
-		if (thatFaction.getRelationWish(myFaction).isLessThan(myFaction.getRelationWish(thatFaction)))
+		// The guild with the lowest wish "wins"
+		if (thatguild.getRelationWish(myguild).isLessThan(myguild.getRelationWish(thatguild)))
 		{
-			ret = thatFaction.getRelationWish(myFaction);
+			ret = thatguild.getRelationWish(myguild);
 		}
 		else
 		{
-			ret = myFaction.getRelationWish(thatFaction);
+			ret = myguild.getRelationWish(thatguild);
 		}
 
-		if (myFaction.equals(thatFaction))
+		if (myguild.equals(thatguild))
 		{
 			ret = Rel.MEMBER;
 			// Do officer and leader check
-			//P.p.log("getRelationOfThatToMe the factions are the same for "+that.getClass().getSimpleName()+" and observer "+me.getClass().getSimpleName());
+			//P.p.log("getRelationOfThatToMe the guilds are the same for "+that.getClass().getSimpleName()+" and observer "+me.getClass().getSimpleName());
 			if (that instanceof FPlayer)
 			{
 				ret = ((FPlayer)that).getRole();
 				//P.p.log("getRelationOfThatToMe it was a player and role is "+ret);
 			}
 		}
-		else if (!ignorePeaceful && (thatFaction.getFlag(FFlag.PEACEFUL) || myFaction.getFlag(FFlag.PEACEFUL)))
+		else if (!ignorePeaceful && (thatguild.getFlag(FFlag.PEACEFUL) || myguild.getFlag(FFlag.PEACEFUL)))
 		{
 			ret = Rel.TRUCE;
 		}
@@ -112,16 +112,16 @@ public class RelationUtil
 		return ret;
 	}
 
-	public static Faction getFaction(RelationParticipator rp)
+	public static guild getguild(RelationParticipator rp)
 	{
-		if (rp instanceof Faction)
+		if (rp instanceof guild)
 		{
-			return (Faction) rp;
+			return (guild) rp;
 		}
 
 		if (rp instanceof FPlayer)
 		{
-			return ((FPlayer) rp).getFaction();
+			return ((FPlayer) rp).getguild();
 		}
 
 		// ERROR
@@ -130,15 +130,15 @@ public class RelationUtil
 
 	public static ChatColor getColorOfThatToMe(RelationParticipator that, RelationParticipator me)
 	{
-		Faction thatFaction = getFaction(that);
-		if (thatFaction != null && thatFaction != getFaction(me))
+		guild thatguild = getguild(that);
+		if (thatguild != null && thatguild != getguild(me))
 		{
-			if (thatFaction.getFlag(FFlag.FRIENDLYFIRE) == true)
+			if (thatguild.getFlag(FFlag.FRIENDLYFIRE) == true)
 			{
 				return Conf.colorFriendlyFire;
 			}
 			
-			if (thatFaction.getFlag(FFlag.PVP) == false)
+			if (thatguild.getFlag(FFlag.PVP) == false)
 			{
 				return Conf.colorNoPVP;
 			}
