@@ -1,7 +1,7 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdDeinvite extends FCommand
 {
@@ -30,18 +30,18 @@ public class CmdDeinvite extends FCommand
 		FPlayer you = this.argAsBestFPlayerMatch(0);
 		if (you == null) return;
 		
-		if (you.getFaction() == myFaction)
+		if (you.getguild() == myguild)
 		{
-			msg("%s<i> is already a member of %s", you.getName(), myFaction.getTag());
+			msg("%s<i> is already a member of %s", you.getName(), myguild.getTag());
 			msg("<i>You might want to: %s", p.cmdBase.cmdKick.getUseageTemplate(false));
 			return;
 		}
 		
-		myFaction.deinvite(you);
+		myguild.deinvite(you);
 		
-		you.msg("%s<i> revoked your invitation to <h>%s<i>.", fme.describeTo(you), myFaction.describeTo(you));
+		you.msg("%s<i> revoked your invitation to <h>%s<i>.", fme.describeTo(you), myguild.describeTo(you));
 		
-		myFaction.msg("%s<i> revoked %s's<i> invitation.", fme.describeTo(myFaction), you.describeTo(myFaction));
+		myguild.msg("%s<i> revoked %s's<i> invitation.", fme.describeTo(myguild), you.describeTo(myguild));
 	}
 	
 }
