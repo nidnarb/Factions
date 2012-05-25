@@ -1,33 +1,33 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
 
-public class FactionRenameEvent extends Event implements Cancellable
+public class guildRenameEvent extends Event implements Cancellable
 {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean cancelled;
 	private FPlayer fplayer;
-	private Faction faction;
+	private guild guild;
 	private String tag;
 
-	public FactionRenameEvent(FPlayer sender, String newTag) 
+	public guildRenameEvent(FPlayer sender, String newTag) 
 	{
 		fplayer = sender;
-		faction = sender.getFaction();
+		guild = sender.getguild();
 		tag = newTag;
 		this.cancelled = false;
 	}
 
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return(faction);
+		return(guild);
 	}
 
 	public FPlayer getFPlayer()
@@ -40,12 +40,12 @@ public class FactionRenameEvent extends Event implements Cancellable
 		return(fplayer.getPlayer());
 	}
 
-	public String getOldFactionTag()
+	public String getOldguildTag()
 	{
-		return(faction.getTag());
+		return(guild.getTag());
 	}
 
-	public String getFactionTag()
+	public String getguildTag()
 	{
 		return(tag);
 	}
