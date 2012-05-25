@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.zcore.CommandVisibility;
-import com.massivecraft.factions.zcore.MCommand;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.zcore.CommandVisibility;
+import com.massivecraft.guilds.zcore.MCommand;
 
 public class CmdAutoHelp extends MCommand<P>
 {
