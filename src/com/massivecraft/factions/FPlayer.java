@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,25 +8,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.event.FPlayerLeaveEvent;
-import com.massivecraft.factions.event.LandClaimEvent;
-import com.massivecraft.factions.iface.EconomyParticipator;
-import com.massivecraft.factions.iface.RelationParticipator;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.integration.LWCFeatures;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.integration.Worldguard;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.util.RelationUtil;
-import com.massivecraft.factions.zcore.persist.PlayerEntity;
+import com.massivecraft.guilds.event.FPlayerLeaveEvent;
+import com.massivecraft.guilds.event.LandClaimEvent;
+import com.massivecraft.guilds.iface.EconomyParticipator;
+import com.massivecraft.guilds.iface.RelationParticipator;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.integration.LWCFeatures;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.integration.Worldguard;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.util.RelationUtil;
+import com.massivecraft.guilds.zcore.persist.PlayerEntity;
 
 
 /**
  * Logged in players always have exactly one FPlayer instance.
- * Logged out players may or may not have an FPlayer instance. They will always have one if they are part of a faction.
- * This is because only players with a faction are saved to disk (in order to not waste disk space).
+ * Logged out players may or may not have an FPlayer instance. They will always have one if they are part of a guild.
+ * This is because only players with a guild are saved to disk (in order to not waste disk space).
  * 
  * The FPlayer is linked to a minecraft player using the player name.
  * 
@@ -42,17 +42,17 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	public FLocation getLastStoodAt() { return this.lastStoodAt; }
 	public void setLastStoodAt(FLocation flocation) { this.lastStoodAt = flocation; }
 	
-	// FIELD: factionId
-	private String factionId;
-	public Faction getFaction() { if(this.factionId == null) {return null;} return Factions.i.get(this.factionId); }
-	public String getFactionId() { return this.factionId; }
-	public boolean hasFaction() { return ! factionId.equals("0"); }
-	public void setFaction(Faction faction)
+	// FIELD: guildId
+	private String guildId;
+	public guild getguild() { if(this.guildId == null) {return null;} return guilds.i.get(this.guildId); }
+	public String getguildId() { return this.guildId; }
+	public boolean hasguild() { return ! guildId.equals("0"); }
+	public void setguild(guild guild)
 	{
-		Faction oldFaction = this.getFaction();
-		if (oldFaction != null) oldFaction.removeFPlayer(this);
-		faction.addFPlayer(this);
-		this.factionId = faction.getId();
+		guild oldguild = this.getguild();
+		if (oldguild != null) oldguild.removeFPlayer(this);
+		guild.addFPlayer(this);
+		this.guildId = guild.getId();
 		SpoutFeatures.updateTitle(this, null);
 		SpoutFeatures.updateTitle(null, this);
 	}
@@ -88,9 +88,9 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	public boolean isMapAutoUpdating() { return mapAutoUpdating; }
 	
 	// FIELD: autoClaimEnabled
-	private transient Faction autoClaimFor;
-	public Faction getAutoClaimFor() { return autoClaimFor; }
-	public void setAutoClaimFor(Faction faction) { this.autoClaimFor = faction; }
+	private transient guild autoClaimFor;
+	public guild getAutoClaimFor() { return autoClaimFor; }
+	public void setAutoClaimFor(guild guild) { this.autoClaimFor = guild; }
 		
 	private transient boolean hasAdminMode = false;
 	public boolean hasAdminMode() { return this.hasAdminMode; }
@@ -109,7 +109,7 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	// GSON need this noarg constructor.
 	public FPlayer()
 	{
-		this.resetFactionData(false);
+		this.resetguildData(false);
 		this.power = Conf.powerPlayerStarting;
 		this.lastPowerUpdateTime = System.currentTimeMillis();
 		this.lastLoginTime = System.currentTimeMillis();
@@ -118,24 +118,24 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		this.loginPvpDisabled = (Conf.noPVPDamageToOthersForXSecondsAfterLogin > 0) ? true : false;
 		this.powerBoost = 0.0;
 
-		if ( ! Conf.newPlayerStartingFactionID.equals("0") && Factions.i.exists(Conf.newPlayerStartingFactionID))
+		if ( ! Conf.newPlayerStartingguildID.equals("0") && guilds.i.exists(Conf.newPlayerStartingguildID))
 		{
-			this.factionId = Conf.newPlayerStartingFactionID;
+			this.guildId = Conf.newPlayerStartingguildID;
 		}
 	}
 	
-	public final void resetFactionData(boolean doSpoutUpdate)
+	public final void resetguildData(boolean doSpoutUpdate)
 	{
-		if (this.factionId != null && Factions.i.exists(this.factionId)) // Avoid infinite loop! TODO: I think that this is needed is a sign we need to refactor.
+		if (this.guildId != null && guilds.i.exists(this.guildId)) // Avoid infinite loop! TODO: I think that this is needed is a sign we need to refactor.
 		{
-			Faction currentFaction = this.getFaction();
-			if (currentFaction != null)
+			guild currentguild = this.getguild();
+			if (currentguild != null)
 			{
-				currentFaction.removeFPlayer(this);
+				currentguild.removeFPlayer(this);
 			}
 		}
 
-		this.factionId = "0"; // The default neutral faction
+		this.guildId = "0"; // The default neutral guild
 		this.role = Rel.MEMBER;
 		this.title = "";
 		this.autoClaimFor = null;
@@ -148,9 +148,9 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		}
 	}
 	
-	public void resetFactionData()
+	public void resetguildData()
 	{
-		this.resetFactionData(true);
+		this.resetguildData(true);
 	}
 	
 	// -------------------------------------------- //
@@ -188,7 +188,7 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	}
 	
 	//----------------------------------------------//
-	// Title, Name, Faction Tag and Chat
+	// Title, Name, guild Tag and Chat
 	//----------------------------------------------//
 	public String getName()
 	{
@@ -197,11 +197,11 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	
 	public String getTag()
 	{
-		if ( ! this.hasFaction())
+		if ( ! this.hasguild())
 		{
 			return "";
 		}
-		return this.getFaction().getTag();
+		return this.getguild().getTag();
 	}
 	
 	// Base concatenations:
@@ -229,9 +229,9 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	// Colored concatenations:
 	// These are used in information messages
 	
-	public String getNameAndTitle(Faction faction)
+	public String getNameAndTitle(guild guild)
 	{
-		return this.getColorTo(faction)+this.getNameAndTitle();
+		return this.getColorTo(guild)+this.getNameAndTitle();
 	}
 	public String getNameAndTitle(FPlayer fplayer)
 	{
@@ -243,7 +243,7 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	
 	public String getChatTag()
 	{
-		if ( ! this.hasFaction()) {
+		if ( ! this.hasguild()) {
 			return "";
 		}
 		
@@ -251,18 +251,18 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	}
 	
 	// Colored Chat Tag
-	public String getChatTag(Faction faction)
+	public String getChatTag(guild guild)
 	{
-		if ( ! this.hasFaction()) {
+		if ( ! this.hasguild()) {
 			return "";
 		}
 		
-		return this.getRelationTo(faction).getColor()+getChatTag();
+		return this.getRelationTo(guild).getColor()+getChatTag();
 	}
 	
 	public String getChatTag(FPlayer fplayer)
 	{
-		if ( ! this.hasFaction())
+		if ( ! this.hasguild())
 		{
 			return "";
 		}
@@ -300,7 +300,7 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	
 	public Rel getRelationToLocation()
 	{
-		return Board.getFactionAt(new FLocation(this)).getRelationTo(this);
+		return Board.getguildAt(new FLocation(this)).getRelationTo(this);
 	}
 	
 	@Override
@@ -421,41 +421,41 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	//----------------------------------------------//
 	public boolean isInOwnTerritory()
 	{
-		return Board.getFactionAt(new FLocation(this)) == this.getFaction();
+		return Board.getguildAt(new FLocation(this)) == this.getguild();
 	}
 	
 	/*public boolean isInOthersTerritory()
 	{
-		Faction factionHere = Board.getFactionAt(new FLocation(this));
-		return factionHere != null && factionHere.isNormal() && factionHere != this.getFaction();
+		guild guildHere = Board.getguildAt(new FLocation(this));
+		return guildHere != null && guildHere.isNormal() && guildHere != this.getguild();
 	}*/
 
 	/*public boolean isInAllyTerritory()
 	{
-		return Board.getFactionAt(new FLocation(this)).getRelationTo(this) == Rel.ALLY;
+		return Board.getguildAt(new FLocation(this)).getRelationTo(this) == Rel.ALLY;
 	}*/
 
 	/*public boolean isInNeutralTerritory()
 	{
-		return Board.getFactionAt(new FLocation(this)).getRelationTo(this) == Rel.NEUTRAL;
+		return Board.getguildAt(new FLocation(this)).getRelationTo(this) == Rel.NEUTRAL;
 	}*/
 
 	public boolean isInEnemyTerritory()
 	{
-		return Board.getFactionAt(new FLocation(this)).getRelationTo(this) == Rel.ENEMY;
+		return Board.getguildAt(new FLocation(this)).getRelationTo(this) == Rel.ENEMY;
 	}
 
-	public void sendFactionHereMessage()
+	public void sendguildHereMessage()
 	{
 		if (SpoutFeatures.updateTerritoryDisplay(this))
 		{
 			return;
 		}
-		Faction factionHere = Board.getFactionAt(new FLocation(this));
-		String msg = P.p.txt.parse("<i>")+" ~ "+factionHere.getTag(this);
-		if (factionHere.getDescription().length() > 0)
+		guild guildHere = Board.getguildAt(new FLocation(this));
+		String msg = P.p.txt.parse("<i>")+" ~ "+guildHere.getTag(this);
+		if (guildHere.getDescription().length() > 0)
 		{
-			msg += " - "+factionHere.getDescription();
+			msg += " - "+guildHere.getDescription();
 		}
 		this.sendMessage(msg);
 	}
@@ -466,18 +466,18 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	
 	public void leave(boolean makePay)
 	{
-		Faction myFaction = this.getFaction();
+		guild myguild = this.getguild();
 		makePay = makePay && Econ.shouldBeUsed() && ! this.hasAdminMode();
 
-		if (myFaction == null)
+		if (myguild == null)
 		{
-			resetFactionData();
+			resetguildData();
 			return;
 		}
 
-		boolean perm = myFaction.getFlag(FFlag.PERMANENT);
+		boolean perm = myguild.getFlag(FFlag.PERMANENT);
 		
-		if (!perm && this.getRole() == Rel.LEADER && myFaction.getFPlayers().size() > 1)
+		if (!perm && this.getRole() == Rel.LEADER && myguild.getFPlayers().size() > 1)
 		{
 			msg("<b>You must give the admin role to someone else first.");
 			return;
@@ -490,57 +490,57 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		}
 
 		// if economy is enabled and they're not on the bypass list, make sure they can pay
-		if (makePay && ! Econ.hasAtLeast(this, Conf.econCostLeave, "to leave your faction.")) return;
+		if (makePay && ! Econ.hasAtLeast(this, Conf.econCostLeave, "to leave your guild.")) return;
 
-		FPlayerLeaveEvent leaveEvent = new FPlayerLeaveEvent(this,myFaction,FPlayerLeaveEvent.PlayerLeaveReason.LEAVE);
+		FPlayerLeaveEvent leaveEvent = new FPlayerLeaveEvent(this,myguild,FPlayerLeaveEvent.PlayerLeaveReason.LEAVE);
 		Bukkit.getServer().getPluginManager().callEvent(leaveEvent);
 		if (leaveEvent.isCancelled()) return;
 
 		// then make 'em pay (if applicable)
-		if (makePay && ! Econ.modifyMoney(this, -Conf.econCostLeave, "to leave your faction.", "for leaving your faction.")) return;
+		if (makePay && ! Econ.modifyMoney(this, -Conf.econCostLeave, "to leave your guild.", "for leaving your guild.")) return;
 
-		// Am I the last one in the faction?
-		if (myFaction.getFPlayers().size() == 1)
+		// Am I the last one in the guild?
+		if (myguild.getFPlayers().size() == 1)
 		{
 			// Transfer all money
 			if (Econ.shouldBeUsed())
-				Econ.transferMoney(this, myFaction, this, Econ.getBalance(myFaction.getAccountId()));
+				Econ.transferMoney(this, myguild, this, Econ.getBalance(myguild.getAccountId()));
 		}
 		
-		if (myFaction.isNormal())
+		if (myguild.isNormal())
 		{
-			for (FPlayer fplayer : myFaction.getFPlayersWhereOnline(true))
+			for (FPlayer fplayer : myguild.getFPlayersWhereOnline(true))
 			{
-				fplayer.msg("%s<i> left %s<i>.", this.describeTo(fplayer, true), myFaction.describeTo(fplayer));
+				fplayer.msg("%s<i> left %s<i>.", this.describeTo(fplayer, true), myguild.describeTo(fplayer));
 			}
 
-			if (Conf.logFactionLeave)
-				P.p.log(this.getName()+" left the faction: "+myFaction.getTag());
+			if (Conf.logguildLeave)
+				P.p.log(this.getName()+" left the guild: "+myguild.getTag());
 		}
 		
-		this.resetFactionData();
+		this.resetguildData();
 
-		if (myFaction.isNormal() && !perm && myFaction.getFPlayers().isEmpty())
+		if (myguild.isNormal() && !perm && myguild.getFPlayers().isEmpty())
 		{
-			// Remove this faction
+			// Remove this guild
 			for (FPlayer fplayer : FPlayers.i.getOnline())
 			{
-				fplayer.msg("<i>%s<i> was disbanded.", myFaction.describeTo(fplayer, true));
+				fplayer.msg("<i>%s<i> was disbanded.", myguild.describeTo(fplayer, true));
 			}
 
-			myFaction.detach();
-			if (Conf.logFactionDisband)
-				P.p.log("The faction "+myFaction.getTag()+" ("+myFaction.getId()+") was disbanded due to the last player ("+this.getName()+") leaving.");
+			myguild.detach();
+			if (Conf.logguildDisband)
+				P.p.log("The guild "+myguild.getTag()+" ("+myguild.getId()+") was disbanded due to the last player ("+this.getName()+") leaving.");
 		}
 	}
 
-	public boolean canClaimForFactionAtLocation(Faction forFaction, Location location, boolean notifyFailure)
+	public boolean canClaimForguildAtLocation(guild forguild, Location location, boolean notifyFailure)
 	{
 		String error = null;
 		FLocation flocation = new FLocation(location);
-		Faction myFaction = getFaction();
-		Faction currentFaction = Board.getFactionAt(flocation);
-		int ownedLand = forFaction.getLandRounded();
+		guild myguild = getguild();
+		guild currentguild = Board.getguildAt(flocation);
+		int ownedLand = forguild.getLandRounded();
 		
 		if (Conf.worldGuardChecking && Worldguard.checkForRegionsInChunk(location))
 		{
@@ -555,27 +555,27 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		{
 			return true;
 		}
-		else if (forFaction == currentFaction)
+		else if (forguild == currentguild)
 		{
-			error = P.p.txt.parse("%s<i> already own this land.", forFaction.describeTo(this, true));
+			error = P.p.txt.parse("%s<i> already own this land.", forguild.describeTo(this, true));
 		}
-		else if ( ! FPerm.TERRITORY.has(this, forFaction, true))
+		else if ( ! FPerm.TERRITORY.has(this, forguild, true))
 		{
 			return false;
 		}
-		else if (forFaction.getFPlayers().size() < Conf.claimsRequireMinFactionMembers)
+		else if (forguild.getFPlayers().size() < Conf.claimsRequireMinguildMembers)
 		{
-			error = P.p.txt.parse("Factions must have at least <h>%s<b> members to claim land.", Conf.claimsRequireMinFactionMembers);
+			error = P.p.txt.parse("guilds must have at least <h>%s<b> members to claim land.", Conf.claimsRequireMinguildMembers);
 		}
-		else if (ownedLand >= forFaction.getPowerRounded())
+		else if (ownedLand >= forguild.getPowerRounded())
 		{
 			error = P.p.txt.parse("<b>You can't claim more land! You need more power!");
 		}
-		else if (Conf.claimedLandsMax != 0 && ownedLand >= Conf.claimedLandsMax && ! forFaction.getFlag(FFlag.INFPOWER))
+		else if (Conf.claimedLandsMax != 0 && ownedLand >= Conf.claimedLandsMax && ! forguild.getFlag(FFlag.INFPOWER))
 		{
 			error = P.p.txt.parse("<b>Limit reached. You can't claim more land!");
 		}
-		else if (currentFaction.getRelationTo(forFaction).isAtLeast(Rel.TRUCE) && ! currentFaction.isNone())
+		else if (currentguild.getRelationTo(forguild).isAtLeast(Rel.TRUCE) && ! currentguild.isNone())
 		{
 			error = P.p.txt.parse("<b>You can't claim this land due to your relation with the current owner.");
 		}
@@ -583,22 +583,22 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		(
 			Conf.claimsMustBeConnected
 			&& ! this.hasAdminMode()
-			&& myFaction.getLandRoundedInWorld(flocation.getWorldName()) > 0
-			&& !Board.isConnectedLocation(flocation, myFaction)
-			&& (!Conf.claimsCanBeUnconnectedIfOwnedByOtherFaction || !currentFaction.isNormal())
+			&& myguild.getLandRoundedInWorld(flocation.getWorldName()) > 0
+			&& !Board.isConnectedLocation(flocation, myguild)
+			&& (!Conf.claimsCanBeUnconnectedIfOwnedByOtherguild || !currentguild.isNormal())
 		)
 		{
-			if (Conf.claimsCanBeUnconnectedIfOwnedByOtherFaction)
-				error = P.p.txt.parse("<b>You can only claim additional land which is connected to your first claim or controlled by another faction!");
+			if (Conf.claimsCanBeUnconnectedIfOwnedByOtherguild)
+				error = P.p.txt.parse("<b>You can only claim additional land which is connected to your first claim or controlled by another guild!");
 			else
 				error = P.p.txt.parse("<b>You can only claim additional land which is connected to your first claim!");
 		}
-		else if (currentFaction.isNormal())
+		else if (currentguild.isNormal())
 		{
-			if ( ! currentFaction.hasLandInflation())
+			if ( ! currentguild.hasLandInflation())
 			{
-				 // TODO more messages WARN current faction most importantly
-				error = P.p.txt.parse("%s<i> owns this land and is strong enough to keep it.", currentFaction.getTag(this));
+				 // TODO more messages WARN current guild most importantly
+				error = P.p.txt.parse("%s<i> owns this land and is strong enough to keep it.", currentguild.getTag(this));
 			}
 			else if ( ! Board.isBorderLocation(flocation))
 			{
@@ -613,17 +613,17 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		return error == null;
 	}
 	
-	public boolean attemptClaim(Faction forFaction, Location location, boolean notifyFailure)
+	public boolean attemptClaim(guild forguild, Location location, boolean notifyFailure)
 	{
 		// notifyFailure is false if called by auto-claim; no need to notify on every failure for it
 		// return value is false on failure, true on success
 		
 		FLocation flocation = new FLocation(location);
-		Faction currentFaction = Board.getFactionAt(flocation);
+		guild currentguild = Board.getguildAt(flocation);
 		
-		int ownedLand = forFaction.getLandRounded();
+		int ownedLand = forguild.getLandRounded();
 		
-		if ( ! this.canClaimForFactionAtLocation(forFaction, location, notifyFailure)) return false;
+		if ( ! this.canClaimForguildAtLocation(forguild, location, notifyFailure)) return false;
 		
 		// TODO: Add flag no costs??
 		// if economy is enabled and they're not on the bypass list, make sure they can pay
@@ -632,43 +632,43 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 		EconomyParticipator payee = null;
 		if (mustPay)
 		{
-			cost = Econ.calculateClaimCost(ownedLand, currentFaction.isNormal());
+			cost = Econ.calculateClaimCost(ownedLand, currentguild.isNormal());
 
-			if (Conf.econClaimUnconnectedFee != 0.0 && forFaction.getLandRoundedInWorld(flocation.getWorldName()) > 0 && !Board.isConnectedLocation(flocation, forFaction))
+			if (Conf.econClaimUnconnectedFee != 0.0 && forguild.getLandRoundedInWorld(flocation.getWorldName()) > 0 && !Board.isConnectedLocation(flocation, forguild))
 				cost += Conf.econClaimUnconnectedFee;
 
-			if(Conf.bankEnabled && Conf.bankFactionPaysLandCosts && this.hasFaction())
-				payee = this.getFaction();
+			if(Conf.bankEnabled && Conf.bankguildPaysLandCosts && this.hasguild())
+				payee = this.getguild();
 			else
 				payee = this;
 
 			if ( ! Econ.hasAtLeast(payee, cost, "to claim this land")) return false;
 		}
 
-		LandClaimEvent claimEvent = new LandClaimEvent(flocation, forFaction, this);
+		LandClaimEvent claimEvent = new LandClaimEvent(flocation, forguild, this);
 		Bukkit.getServer().getPluginManager().callEvent(claimEvent);
 		if(claimEvent.isCancelled()) return false;
 
 		// then make 'em pay (if applicable)
 		if (mustPay && ! Econ.modifyMoney(payee, -cost, "to claim this land", "for claiming this land")) return false;
 
-		if (LWCFeatures.getEnabled() && forFaction.isNormal() && Conf.onCaptureResetLwcLocks)
-			LWCFeatures.clearOtherChests(flocation, this.getFaction());
+		if (LWCFeatures.getEnabled() && forguild.isNormal() && Conf.onCaptureResetLwcLocks)
+			LWCFeatures.clearOtherChests(flocation, this.getguild());
 
 		// announce success
 		Set<FPlayer> informTheseFPlayers = new HashSet<FPlayer>();
 		informTheseFPlayers.add(this);
-		informTheseFPlayers.addAll(forFaction.getFPlayersWhereOnline(true));
+		informTheseFPlayers.addAll(forguild.getFPlayersWhereOnline(true));
 		for (FPlayer fp : informTheseFPlayers)
 		{
-			fp.msg("<h>%s<i> claimed land for <h>%s<i> from <h>%s<i>.", this.describeTo(fp, true), forFaction.describeTo(fp), currentFaction.describeTo(fp));
+			fp.msg("<h>%s<i> claimed land for <h>%s<i> from <h>%s<i>.", this.describeTo(fp, true), forguild.describeTo(fp), currentguild.describeTo(fp));
 		}
 		
-		Board.setFactionAt(forFaction, flocation);
+		Board.setguildAt(forguild, flocation);
 		SpoutFeatures.updateTerritoryDisplayLoc(flocation);
 
 		if (Conf.logLandClaims)
-			P.p.log(this.getName()+" claimed land at ("+flocation.getCoordString()+") for the faction: "+forFaction.getTag());
+			P.p.log(this.getName()+" claimed land at ("+flocation.getCoordString()+") for the guild: "+forguild.getTag());
 
 		return true;
 	}
@@ -680,7 +680,7 @@ public class FPlayer extends PlayerEntity implements EconomyParticipator
 	@Override
 	public boolean shouldBeSaved()
 	{
-		if (this.hasFaction()) return true;
+		if (this.hasguild()) return true;
 		if (this.getPowerRounded() != this.getPowerMaxRounded() && this.getPowerRounded() != (int) Math.round(Conf.powerPlayerStarting)) return true;
 		return false;
 	}
