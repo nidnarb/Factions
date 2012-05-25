@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.struct.Rel;
 
 public class CmdOfficer extends FCommand
 {
@@ -32,17 +32,17 @@ public class CmdOfficer extends FCommand
 		if (you == null) return;
 
 		boolean permAny = Permission.OFFICER_ANY.has(sender, false);
-		Faction targetFaction = you.getFaction();
+		guild targetguild = you.getguild();
 
-		if (targetFaction != myFaction && !permAny)
+		if (targetguild != myguild && !permAny)
 		{
-			msg("%s<b> is not a member in your faction.", you.describeTo(fme, true));
+			msg("%s<b> is not a member in your guild.", you.describeTo(fme, true));
 			return;
 		}
 		
 		if (fme != null && fme.getRole() != Rel.LEADER && !permAny)
 		{
-			msg("<b>You are not the faction leader.");
+			msg("<b>You are not the guild leader.");
 			return;
 		}
 
@@ -54,7 +54,7 @@ public class CmdOfficer extends FCommand
 
 		if (you.getRole() == Rel.LEADER)
 		{
-			msg("<b>The target player is a faction leader. Demote them first.");
+			msg("<b>The target player is a guild leader. Demote them first.");
 			return;
 		}
 
@@ -62,14 +62,14 @@ public class CmdOfficer extends FCommand
 		{
 			// Revoke
 			you.setRole(Rel.MEMBER);
-			targetFaction.msg("%s<i> is no longer officer in your faction.", you.describeTo(targetFaction, true));
+			targetguild.msg("%s<i> is no longer officer in your guild.", you.describeTo(targetguild, true));
 			msg("<i>You have removed officer status from %s<i>.", you.describeTo(fme, true));
 		}
 		else
 		{
 			// Give
 			you.setRole(Rel.OFFICER);
-			targetFaction.msg("%s<i> was promoted to officer in your faction.", you.describeTo(targetFaction, true));
+			targetguild.msg("%s<i> was promoted to officer in your guild.", you.describeTo(targetguild, true));
 			msg("<i>You have promoted %s<i> to officer.", you.describeTo(fme, true));
 		}
 	}
