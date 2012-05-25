@@ -1,4 +1,4 @@
-package com.massivecraft.factions.struct;
+package com.massivecraft.guilds.struct;
 
 import java.lang.reflect.Type;
 import java.util.Iterator;
@@ -8,10 +8,10 @@ import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.P;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -22,76 +22,76 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.massivecraft.factions.FPlayers;
+import com.massivecraft.guilds.FPlayers;
 
 
 public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonSerializer<TerritoryAccess>
 {
-	private String hostFactionID;
-	private boolean hostFactionAllowed = true;
-	private Set<String> factionIDs = new LinkedHashSet<String>();
+	private String hostguildID;
+	private boolean hostguildAllowed = true;
+	private Set<String> guildIDs = new LinkedHashSet<String>();
 	private Set<String> fplayerIDs = new LinkedHashSet<String>();
 
 
-	public TerritoryAccess(String factionID)
+	public TerritoryAccess(String guildID)
 	{
-		hostFactionID = factionID;
+		hostguildID = guildID;
 	}
 
 	public TerritoryAccess() {}
 
 
-	public void setHostFactionID(String factionID)
+	public void setHostguildID(String guildID)
 	{
-		hostFactionID = factionID;
-		hostFactionAllowed = true;
-		factionIDs.clear();
+		hostguildID = guildID;
+		hostguildAllowed = true;
+		guildIDs.clear();
 		fplayerIDs.clear();
 	}
-	public String getHostFactionID()
+	public String getHostguildID()
 	{
-		return hostFactionID;
+		return hostguildID;
 	}
-	public Faction getHostFaction()
+	public guild getHostguild()
 	{
-		return Factions.i.get(hostFactionID);
+		return guilds.i.get(hostguildID);
 	}
 
-	// considered "default" if host faction is still allowed and nobody has been granted access
+	// considered "default" if host guild is still allowed and nobody has been granted access
 	public boolean isDefault()
 	{
-		return this.hostFactionAllowed && factionIDs.isEmpty() && fplayerIDs.isEmpty();
+		return this.hostguildAllowed && guildIDs.isEmpty() && fplayerIDs.isEmpty();
 	}
 
-	public boolean isHostFactionAllowed()
+	public boolean isHostguildAllowed()
 	{
-		return this.hostFactionAllowed;
+		return this.hostguildAllowed;
 	}
-	public void setHostFactionAllowed(boolean allowed)
+	public void setHostguildAllowed(boolean allowed)
 	{
-		this.hostFactionAllowed = allowed;
+		this.hostguildAllowed = allowed;
 	}
 
-	public boolean doesHostFactionMatch(Object testSubject)
+	public boolean doesHostguildMatch(Object testSubject)
 	{
 		if (testSubject instanceof String)
-			return hostFactionID.equals((String)testSubject);
+			return hostguildID.equals((String)testSubject);
 		else if (testSubject instanceof Player)
-			return hostFactionID.equals(FPlayers.i.get((Player)testSubject).getFactionId());
+			return hostguildID.equals(FPlayers.i.get((Player)testSubject).getguildId());
 		else if (testSubject instanceof FPlayer)
-			return hostFactionID.equals(((FPlayer)testSubject).getFactionId());
-		else if (testSubject instanceof Faction)
-			return hostFactionID.equals(((Faction)testSubject).getId());
+			return hostguildID.equals(((FPlayer)testSubject).getguildId());
+		else if (testSubject instanceof guild)
+			return hostguildID.equals(((guild)testSubject).getId());
 		return false;
 	}
 
-	public void addFaction(String factionID)
+	public void addguild(String guildID)
 	{
-		factionIDs.add(factionID);
+		guildIDs.add(guildID);
 	}
-	public void addFaction(Faction faction)
+	public void addguild(guild guild)
 	{
-		addFaction(faction.getId());
+		addguild(guild.getId());
 	}
 
 	public void addFPlayer(String fplayerID)
@@ -103,13 +103,13 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 		addFPlayer(fplayer.getId());
 	}
 
-	public void removeFaction(String factionID)
+	public void removeguild(String guildID)
 	{
-		factionIDs.remove(factionID);
+		guildIDs.remove(guildID);
 	}
-	public void removeFaction(Faction faction)
+	public void removeguild(guild guild)
 	{
-		removeFaction(faction.getId());
+		removeguild(guild.getId());
 	}
 
 	public void removeFPlayer(String fplayerID)
@@ -121,27 +121,27 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 		removeFPlayer(fplayer.getId());
 	}
 
-	// return true if faction was added, false if it was removed
-	public boolean toggleFaction(String factionID)
+	// return true if guild was added, false if it was removed
+	public boolean toggleguild(String guildID)
 	{
-		// if the host faction, special handling
-		if (doesHostFactionMatch(factionID))
+		// if the host guild, special handling
+		if (doesHostguildMatch(guildID))
 		{
-			hostFactionAllowed ^= true;
-			return hostFactionAllowed;
+			hostguildAllowed ^= true;
+			return hostguildAllowed;
 		}
 
-		if (factionIDs.contains(factionID))
+		if (guildIDs.contains(guildID))
 		{
-			removeFaction(factionID);
+			removeguild(guildID);
 			return false;
 		}
-		addFaction(factionID);
+		addguild(guildID);
 		return true;
 	}
-	public boolean toggleFaction(Faction faction)
+	public boolean toggleguild(guild guild)
 	{
-		return toggleFaction(faction.getId());
+		return toggleguild(guild.getId());
 	}
 
 	public boolean toggleFPlayer(String fplayerID)
@@ -159,14 +159,14 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 		return toggleFPlayer(fplayer.getId());
 	}
 
-	public String factionList()
+	public String guildList()
 	{
 		StringBuilder list = new StringBuilder();
-		for (String factionID : factionIDs)
+		for (String guildID : guildIDs)
 		{
 			if (list.length() > 0)
 				list.append(", ");
-			list.append(Factions.i.get(factionID).getTag());
+			list.append(guilds.i.get(guildID).getTag());
 		}
 		return list.toString();
 	}
@@ -183,36 +183,36 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 		return list.toString();
 	}
 
-	// these return false if not granted explicit access, or true if granted explicit access (in FPlayer or Faction lists)
-	// they do not take into account hostFactionAllowed, which will need to be checked separately (as to not override FPerms which are denied for faction members and such)
+	// these return false if not granted explicit access, or true if granted explicit access (in FPlayer or guild lists)
+	// they do not take into account hostguildAllowed, which will need to be checked separately (as to not override FPerms which are denied for guild members and such)
 	public boolean subjectHasAccess(Object testSubject)
 	{
 		if (testSubject instanceof Player)
 			return fPlayerHasAccess(FPlayers.i.get((Player)testSubject));
 		else if (testSubject instanceof FPlayer)
 			return fPlayerHasAccess((FPlayer)testSubject);
-		else if (testSubject instanceof Faction)
-			return factionHasAccess((Faction)testSubject);
+		else if (testSubject instanceof guild)
+			return guildHasAccess((guild)testSubject);
 		return false;
 	}
 	public boolean fPlayerHasAccess(FPlayer fplayer)
 	{
-		if (factionHasAccess(fplayer.getFactionId())) return true;
+		if (guildHasAccess(fplayer.getguildId())) return true;
 		return fplayerIDs.contains(fplayer.getId());
 	}
-	public boolean factionHasAccess(Faction faction)
+	public boolean guildHasAccess(guild guild)
 	{
-		return factionHasAccess(faction.getId());
+		return guildHasAccess(guild.getId());
 	}
-	public boolean factionHasAccess(String factionID)
+	public boolean guildHasAccess(String guildID)
 	{
-		return factionIDs.contains(factionID);
+		return guildIDs.contains(guildID);
 	}
 
 	// this should normally only be checked after running subjectHasAccess() or fPlayerHasAccess() above to see if they have access explicitly granted
 	public boolean subjectAccessIsRestricted(Object testSubject)
 	{
-		return ( ! this.isHostFactionAllowed() && this.doesHostFactionMatch(testSubject) && ! FPerm.ACCESS.has(testSubject, this.getHostFaction()));
+		return ( ! this.isHostguildAllowed() && this.doesHostguildMatch(testSubject) && ! FPerm.ACCESS.has(testSubject, this.getHostguild()));
 	}
 
 
@@ -225,29 +225,29 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 	{
 		try
 		{
-			// if stored as simple string, it's just the faction ID and default values are to be used
+			// if stored as simple string, it's just the guild ID and default values are to be used
 			if (json.isJsonPrimitive())
 			{
-				String factionID = json.getAsString();
-				return new TerritoryAccess(factionID);
+				String guildID = json.getAsString();
+				return new TerritoryAccess(guildID);
 			}
 
 			// otherwise, it's stored as an object and all data should be present
 			JsonObject obj = json.getAsJsonObject();
 			if (obj == null) return null;
 
-			String factionID = obj.get("ID").getAsString();
+			String guildID = obj.get("ID").getAsString();
 			boolean hostAllowed = obj.get("open").getAsBoolean();
-			JsonArray factions = obj.getAsJsonArray("factions");
+			JsonArray guilds = obj.getAsJsonArray("guilds");
 			JsonArray fplayers = obj.getAsJsonArray("fplayers");
 
-			TerritoryAccess access = new TerritoryAccess(factionID);
-			access.setHostFactionAllowed(hostAllowed);
+			TerritoryAccess access = new TerritoryAccess(guildID);
+			access.setHostguildAllowed(hostAllowed);
 
-			Iterator<JsonElement> iter = factions.iterator();
+			Iterator<JsonElement> iter = guilds.iterator();
 			while (iter.hasNext())
 			{
-				access.addFaction(iter.next().getAsString());
+				access.addguild(iter.next().getAsString());
 			}
 
 			iter = fplayers.iterator();
@@ -277,23 +277,23 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 			// if default values, store as simple string
 			if (src.isDefault())
 			{
-				// if Wilderness (faction "0") and default access values, no need to store it
-				if (src.getHostFactionID().equals("0"))
+				// if Wilderness (guild "0") and default access values, no need to store it
+				if (src.getHostguildID().equals("0"))
 					return null;
 
-				return new JsonPrimitive(src.getHostFactionID());
+				return new JsonPrimitive(src.getHostguildID());
 			}
 
 			// otherwise, store all data
 			JsonObject obj = new JsonObject();
 
-			JsonArray factions = new JsonArray();
+			JsonArray guilds = new JsonArray();
 			JsonArray fplayers = new JsonArray();
 
-			Iterator<String> iter = src.factionIDs.iterator();
+			Iterator<String> iter = src.guildIDs.iterator();
 			while (iter.hasNext())
 			{
-				factions.add(new JsonPrimitive(iter.next()));
+				guilds.add(new JsonPrimitive(iter.next()));
 			}
 
 			iter = src.fplayerIDs.iterator();
@@ -302,9 +302,9 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 				fplayers.add(new JsonPrimitive(iter.next()));
 			}
 
-			obj.addProperty("ID", src.getHostFactionID());
-			obj.addProperty("open", src.isHostFactionAllowed());
-			obj.add("factions", factions);
+			obj.addProperty("ID", src.getHostguildID());
+			obj.addProperty("open", src.isHostguildAllowed());
+			obj.add("guilds", guilds);
 			obj.add("fplayers", fplayers);
 
 			return obj;
@@ -326,7 +326,7 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 	@Override
 	public int hashCode()
 	{
-		return this.hostFactionID.hashCode();
+		return this.hostguildID.hashCode();
 	}
 
 	@Override
@@ -338,6 +338,6 @@ public class TerritoryAccess implements JsonDeserializer<TerritoryAccess>, JsonS
 			return false;
 
 		TerritoryAccess that = (TerritoryAccess) obj;
-		return this.hostFactionID.equals(that.hostFactionID) && this.hostFactionAllowed == that.hostFactionAllowed && this.factionIDs == that.factionIDs && this.fplayerIDs == that.fplayerIDs;
+		return this.hostguildID.equals(that.hostguildID) && this.hostguildAllowed == that.hostguildAllowed && this.guildIDs == that.guildIDs && this.fplayerIDs == that.fplayerIDs;
 	}
 }
