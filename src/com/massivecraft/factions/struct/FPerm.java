@@ -1,4 +1,4 @@
-package com.massivecraft.factions.struct;
+package com.massivecraft.guilds.struct;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -9,18 +9,18 @@ import org.bukkit.Location;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.iface.RelationParticipator;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.iface.RelationParticipator;
 
 /**
- * Permissions that you (a player) may or may not have in the territory of a certain faction.
- * Each faction have many Rel's assigned to each one of these Perms. 
+ * Permissions that you (a player) may or may not have in the territory of a certain guild.
+ * Each guild have many Rel's assigned to each one of these Perms. 
  */
 public enum FPerm
 {
@@ -37,7 +37,7 @@ public enum FPerm
 	TERRITORY("territory", "claim or unclaim",     Rel.LEADER, Rel.OFFICER),
 	CAPE("cape", "set the cape",                   Rel.LEADER, Rel.OFFICER),
 	ACCESS("access", "grant territory access",     Rel.LEADER, Rel.OFFICER),
-	DISBAND("disband", "disband the faction",      Rel.LEADER),
+	DISBAND("disband", "disband the guild",      Rel.LEADER),
 	PERMS("perms", "manage permissions",           Rel.LEADER),
 	;
 	
@@ -65,7 +65,7 @@ public enum FPerm
 	
 	public Set<Rel> getDefault()
 	{
-		Set<Rel> ret = Conf.factionPermDefaults.get(this);
+		Set<Rel> ret = Conf.guildPermDefaults.get(this);
 		if (ret == null) return this.defaultDefaultValue;
 		return ret; 
 	}
@@ -137,7 +137,7 @@ public enum FPerm
 	}
 
 	private static final String errorpattern = "%s<b> does not allow you to %s<b>.";
-	public boolean has(Object testSubject, Faction hostFaction, boolean informIfNot)
+	public boolean has(Object testSubject, guild hostguild, boolean informIfNot)
 	{
 		if (testSubject instanceof ConsoleCommandSender) return true;
 		
@@ -156,17 +156,17 @@ public enum FPerm
 			return false;
 		}
 		
-		Rel rel = rpSubject.getRelationTo(hostFaction);
+		Rel rel = rpSubject.getRelationTo(hostguild);
 		
 		// TODO: Create better description messages like: "You must at least be officer".
-		boolean ret = hostFaction.getPermittedRelations(this).contains(rel);
+		boolean ret = hostguild.getPermittedRelations(this).contains(rel);
 		
 		if (rpSubject instanceof FPlayer && ret == false && ((FPlayer)rpSubject).hasAdminMode()) ret = true;
 		
 		if (!ret && informIfNot && rpSubject instanceof FPlayer)
 		{
 			FPlayer fplayer = (FPlayer)rpSubject;
-			fplayer.msg(errorpattern, hostFaction.describeTo(fplayer, true), this.getDescription());
+			fplayer.msg(errorpattern, hostguild.describeTo(fplayer, true), this.getDescription());
 			if (Permission.ADMIN.has(fplayer.getPlayer()))
 			{
 				fplayer.msg("<i>You can bypass by using " + P.p.cmdBase.cmdBypass.getUseageTemplate(false));
@@ -174,9 +174,9 @@ public enum FPerm
 		}
 		return ret;
 	}
-	public boolean has(Object testSubject, Faction hostFaction)
+	public boolean has(Object testSubject, guild hostguild)
 	{
-		return this.has(testSubject, hostFaction, false);
+		return this.has(testSubject, hostguild, false);
 	}
 	public boolean has(Object testSubject, FLocation floc, boolean informIfNot)
 	{
@@ -194,12 +194,12 @@ public enum FPerm
 					else if (testSubject instanceof FPlayer)
 						notify = (FPlayer)testSubject;
 					if (notify != null)
-						notify.msg("<b>This territory owned by your faction has restricted access.");
+						notify.msg("<b>This territory owned by your guild has restricted access.");
 				}
 				return false;
 			}
 		}
-		return this.has(testSubject, access.getHostFaction(), informIfNot);
+		return this.has(testSubject, access.getHostguild(), informIfNot);
 	}
 	public boolean has(Object testSubject, Location loc, boolean informIfNot)
 	{
