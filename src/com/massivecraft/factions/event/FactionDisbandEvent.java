@@ -1,16 +1,16 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
 
-public class FactionDisbandEvent extends Event implements Cancellable
+public class guildDisbandEvent extends Event implements Cancellable
 {
 	private static final HandlerList handlers = new HandlerList();
 
@@ -18,11 +18,11 @@ public class FactionDisbandEvent extends Event implements Cancellable
 	private String id;
 	private Player sender;
 
-	public FactionDisbandEvent(Player sender, String factionId)
+	public guildDisbandEvent(Player sender, String guildId)
 	{
 		cancelled = false;
 		this.sender = sender;
-		this.id = factionId;
+		this.id = guildId;
 	}
 
 	public HandlerList getHandlers() 
@@ -35,9 +35,9 @@ public class FactionDisbandEvent extends Event implements Cancellable
 		return handlers;
 	}
 
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return Factions.i.get(id);
+		return guilds.i.get(id);
 	}
 
 	public FPlayer getFPlayer()
