@@ -1,18 +1,18 @@
-package com.massivecraft.factions.struct;
+package com.massivecraft.guilds.struct;
 
 import org.bukkit.ChatColor;
 
-import com.massivecraft.factions.Conf;
+import com.massivecraft.guilds.Conf;
 
 public enum Rel
 {
-	LEADER   (70, "your faction leader", "your faction leader", "", ""),
-	OFFICER  (60, "an officer in your faction", "officers in your faction", "", ""),
-	MEMBER   (50, "a member in your faction", "members in your faction", "your faction", "your factions"),
-	ALLY     (40, "an ally", "allies", "an allied faction", "allied factions"),
-	TRUCE    (30, "someone in truce with you", "those in truce with you", "a faction in truce", "factions in truce"),
-	NEUTRAL  (20, "someone neutral to you", "those neutral to you", "a neutral faction", "neutral factions"),
-	ENEMY    (10, "an enemy", "enemies", "an enemy faction", "enemy factions"),
+	LEADER   (70, "your guild leader", "your guild leader", "", ""),
+	OFFICER  (60, "an officer in your guild", "officers in your guild", "", ""),
+	MEMBER   (50, "a member in your guild", "members in your guild", "your guild", "your guilds"),
+	ALLY     (40, "an ally", "allies", "an allied guild", "allied guilds"),
+	TRUCE    (30, "someone in truce with you", "those in truce with you", "a guild in truce", "guilds in truce"),
+	NEUTRAL  (20, "someone neutral to you", "those neutral to you", "a neutral guild", "neutral guilds"),
+	ENEMY    (10, "an enemy", "enemies", "an enemy guild", "enemy guilds"),
 	;
 	
 	private final int value;
@@ -22,19 +22,19 @@ public enum Rel
 	private final String descPlayerMany;
 	public String getDescPlayerMany() { return this.descPlayerMany; }
 	
-	private final String descFactionOne;
-	public String getDescFactionOne() { return this.descFactionOne; }
+	private final String descguildOne;
+	public String getDescguildOne() { return this.descguildOne; }
 	
-	private final String descFactionMany;
-	public String getDescFactionMany() { return this.descFactionMany; }
+	private final String descguildMany;
+	public String getDescguildMany() { return this.descguildMany; }
 	
-	private Rel(final int value, final String descPlayerOne, final String descPlayerMany, final String descFactionOne, final String descFactionMany)
+	private Rel(final int value, final String descPlayerOne, final String descPlayerMany, final String descguildOne, final String descguildMany)
 	{
 		this.value = value;
 		this.descPlayerOne = descPlayerOne;
 		this.descPlayerMany = descPlayerMany;
-		this.descFactionOne = descFactionOne;
-		this.descFactionMany = descFactionMany;
+		this.descguildOne = descguildOne;
+		this.descguildMany = descguildMany;
 	}
 	
 	public static Rel parse(String str)
