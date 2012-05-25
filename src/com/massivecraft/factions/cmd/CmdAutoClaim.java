@@ -1,8 +1,8 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdAutoClaim extends FCommand
 {
@@ -26,20 +26,20 @@ public class CmdAutoClaim extends FCommand
 	@Override
 	public void perform()
 	{
-		Faction forFaction = this.argAsFaction(0, myFaction);
-		if (forFaction == null || forFaction == fme.getAutoClaimFor())
+		guild forguild = this.argAsguild(0, myguild);
+		if (forguild == null || forguild == fme.getAutoClaimFor())
 		{
 			fme.setAutoClaimFor(null);
 			msg("<i>Auto-claiming of land disabled.");
 			return;
 		}
 		
-		if ( ! FPerm.TERRITORY.has(fme, forFaction, true)) return;
+		if ( ! FPerm.TERRITORY.has(fme, forguild, true)) return;
 		
-		fme.setAutoClaimFor(forFaction);
+		fme.setAutoClaimFor(forguild);
 		
-		msg("<i>Now auto-claiming land for <h>%s<i>.", forFaction.describeTo(fme));
-		fme.attemptClaim(forFaction, me.getLocation(), true);
+		msg("<i>Now auto-claiming land for <h>%s<i>.", forguild.describeTo(fme));
+		fme.attemptClaim(forguild, me.getLocation(), true);
 	}
 	
 }
