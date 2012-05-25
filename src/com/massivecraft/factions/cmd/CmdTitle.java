@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 public class CmdTitle extends FCommand
 {
@@ -41,9 +41,9 @@ public class CmdTitle extends FCommand
 		you.setTitle(title);
 		
 		// Inform
-		myFaction.msg("%s<i> changed a title: %s", fme.describeTo(myFaction, true), you.describeTo(myFaction, true));
+		myguild.msg("%s<i> changed a title: %s", fme.describeTo(myguild, true), you.describeTo(myguild, true));
 
-		if (Conf.spoutFactionTitlesOverNames)
+		if (Conf.spoutguildTitlesOverNames)
 		{
 			SpoutFeatures.updateTitle(me, null);
 		}
