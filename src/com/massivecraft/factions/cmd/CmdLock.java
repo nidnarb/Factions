@@ -1,12 +1,12 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdLock extends FCommand {
 	
 	// TODO: This solution needs refactoring.
 	/*
-	   factions.lock:
+	   guilds.lock:
 	   description: use the /f lock [on/off] command to temporarily lock the data files from being overwritten
 	   default: op
 	 */
@@ -35,11 +35,11 @@ public class CmdLock extends FCommand {
 		
 		if( p.getLocked())
 		{
-			msg("<i>Factions is now locked");
+			msg("<i>guilds is now locked");
 		}
 		else
 		{
-			msg("<i>Factions in now unlocked");
+			msg("<i>guilds in now unlocked");
 		}
 	}
 	
