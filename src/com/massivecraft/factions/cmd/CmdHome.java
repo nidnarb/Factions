@@ -1,4 +1,4 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,17 +7,17 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.integration.EssentialsFeatures;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.zcore.util.SmokeUtil;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.integration.EssentialsFeatures;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.zcore.util.SmokeUtil;
 
 
 public class CmdHome extends FCommand
@@ -46,44 +46,44 @@ public class CmdHome extends FCommand
 		// TODO: Hide this command on help also.
 		if ( ! Conf.homesEnabled)
 		{
-			fme.msg("<b>Sorry, Faction homes are disabled on this server.");
+			fme.msg("<b>Sorry, guild homes are disabled on this server.");
 			return;
 		}
 
 		if ( ! Conf.homesTeleportCommandEnabled)
 		{
-			fme.msg("<b>Sorry, the ability to teleport to Faction homes is disabled on this server.");
+			fme.msg("<b>Sorry, the ability to teleport to guild homes is disabled on this server.");
 			return;
 		}
 		
-		if ( ! myFaction.hasHome())
+		if ( ! myguild.hasHome())
 		{
-			fme.msg("<b>Your faction does not have a home. " + (fme.getRole().isLessThan(Rel.OFFICER) ? "<i> Ask your leader to:" : "<i>You should:"));
+			fme.msg("<b>Your guild does not have a home. " + (fme.getRole().isLessThan(Rel.OFFICER) ? "<i> Ask your leader to:" : "<i>You should:"));
 			fme.sendMessage(p.cmdBase.cmdSethome.getUseageTemplate());
 			return;
 		}
 		
 		if ( ! Conf.homesTeleportAllowedFromEnemyTerritory && fme.isInEnemyTerritory())
 		{
-			fme.msg("<b>You cannot teleport to your faction home while in the territory of an enemy faction.");
+			fme.msg("<b>You cannot teleport to your guild home while in the territory of an enemy guild.");
 			return;
 		}
 		
-		if ( ! Conf.homesTeleportAllowedFromDifferentWorld && me.getWorld().getUID() != myFaction.getHome().getWorld().getUID())
+		if ( ! Conf.homesTeleportAllowedFromDifferentWorld && me.getWorld().getUID() != myguild.getHome().getWorld().getUID())
 		{
-			fme.msg("<b>You cannot teleport to your faction home while in a different world.");
+			fme.msg("<b>You cannot teleport to your guild home while in a different world.");
 			return;
 		}
 		
-		Faction faction = Board.getFactionAt(new FLocation(me.getLocation()));
+		guild guild = Board.getguildAt(new FLocation(me.getLocation()));
 		Location loc = me.getLocation().clone();
 		
-		// if player is not in a safe zone or their own faction territory, only allow teleport if no enemies are nearby
+		// if player is not in a safe zone or their own guild territory, only allow teleport if no enemies are nearby
 		if
 		(
 			Conf.homesTeleportAllowedEnemyDistance > 0
 			&&
-			faction.getFlag(FFlag.PVP)
+			guild.getFlag(FFlag.PVP)
 			&&
 			(
 				! fme.isInOwnTerritory()
@@ -120,16 +120,16 @@ public class CmdHome extends FCommand
 				if (dx > max || dy > max || dz > max)
 					continue;
 
-				fme.msg("<b>You cannot teleport to your faction home while an enemy is within " + Conf.homesTeleportAllowedEnemyDistance + " blocks of you.");
+				fme.msg("<b>You cannot teleport to your guild home while an enemy is within " + Conf.homesTeleportAllowedEnemyDistance + " blocks of you.");
 				return;
 			}
 		}
 
 		// if Essentials teleport handling is enabled and available, pass the teleport off to it (for delay and cooldown)
-		if (EssentialsFeatures.handleTeleport(me, myFaction.getHome())) return;
+		if (EssentialsFeatures.handleTeleport(me, myguild.getHome())) return;
 
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
-		if ( ! payForCommand(Conf.econCostHome, "to teleport to your faction home", "for teleporting to your faction home")) return;
+		if ( ! payForCommand(Conf.econCostHome, "to teleport to your guild home", "for teleporting to your guild home")) return;
 
 		// Create a smoke effect
 		if (Conf.homesTeleportCommandSmokeEffectEnabled)
@@ -137,12 +137,12 @@ public class CmdHome extends FCommand
 			List<Location> smokeLocations = new ArrayList<Location>();
 			smokeLocations.add(loc);
 			smokeLocations.add(loc.add(0, 1, 0));
-			smokeLocations.add(myFaction.getHome());
-			smokeLocations.add(myFaction.getHome().clone().add(0, 1, 0));
+			smokeLocations.add(myguild.getHome());
+			smokeLocations.add(myguild.getHome().clone().add(0, 1, 0));
 			SmokeUtil.spawnCloudRandom(smokeLocations, 3f);
 		}
 
-		me.teleport(myFaction.getHome());
+		me.teleport(myguild.getHome());
 	}
 	
 }
