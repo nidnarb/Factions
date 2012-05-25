@@ -1,16 +1,16 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.event.FactionRenameEvent;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.util.MiscUtil;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.event.guildRenameEvent;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.util.MiscUtil;
 
 public class CmdTag extends FCommand
 {
@@ -37,14 +37,14 @@ public class CmdTag extends FCommand
 		String tag = this.argAsString(0);
 		
 		// TODO does not first test cover selfcase?
-		if (Factions.i.isTagTaken(tag) && ! MiscUtil.getComparisonString(tag).equals(myFaction.getComparisonTag()))
+		if (guilds.i.isTagTaken(tag) && ! MiscUtil.getComparisonString(tag).equals(myguild.getComparisonTag()))
 		{
 			msg("<b>That tag is already taken");
 			return;
 		}
 
 		ArrayList<String> errors = new ArrayList<String>();
-		errors.addAll(Factions.validateTag(tag));
+		errors.addAll(guilds.validateTag(tag));
 		if (errors.size() > 0)
 		{
 			sendMessage(errors);
@@ -52,33 +52,33 @@ public class CmdTag extends FCommand
 		}
 
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make sure they can pay
-		if ( ! canAffordCommand(Conf.econCostTag, "to change the faction tag")) return;
+		if ( ! canAffordCommand(Conf.econCostTag, "to change the guild tag")) return;
 
-		// trigger the faction rename event (cancellable)
-		FactionRenameEvent renameEvent = new FactionRenameEvent(fme, tag);
+		// trigger the guild rename event (cancellable)
+		guildRenameEvent renameEvent = new guildRenameEvent(fme, tag);
 		Bukkit.getServer().getPluginManager().callEvent(renameEvent);
 		if(renameEvent.isCancelled()) return;
 
 		// then make 'em pay (if applicable)
-		if ( ! payForCommand(Conf.econCostTag, "to change the faction tag", "for changing the faction tag")) return;
+		if ( ! payForCommand(Conf.econCostTag, "to change the guild tag", "for changing the guild tag")) return;
 
-		String oldtag = myFaction.getTag();
-		myFaction.setTag(tag);
+		String oldtag = myguild.getTag();
+		myguild.setTag(tag);
 
 		// Inform
-		myFaction.msg("%s<i> changed your faction tag to %s", fme.describeTo(myFaction, true), myFaction.getTag(myFaction));
-		for (Faction faction : Factions.i.get())
+		myguild.msg("%s<i> changed your guild tag to %s", fme.describeTo(myguild, true), myguild.getTag(myguild));
+		for (guild guild : guilds.i.get())
 		{
-			if (faction == myFaction)
+			if (guild == myguild)
 			{
 				continue;
 			}
-			faction.msg("<i>The faction %s<i> changed their name to %s.", fme.getColorTo(faction)+oldtag, myFaction.getTag(faction));
+			guild.msg("<i>The guild %s<i> changed their name to %s.", fme.getColorTo(guild)+oldtag, myguild.getTag(guild));
 		}
 
-		if (Conf.spoutFactionTagsOverNames)
+		if (Conf.spoutguildTagsOverNames)
 		{
-			SpoutFeatures.updateTitle(myFaction, null);
+			SpoutFeatures.updateTitle(myguild, null);
 		}
 	}
 	
