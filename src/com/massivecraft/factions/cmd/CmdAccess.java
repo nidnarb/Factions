@@ -1,14 +1,14 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.struct.TerritoryAccess;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.struct.TerritoryAccess;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 
 public class CmdAccess extends FCommand
@@ -39,23 +39,23 @@ public class CmdAccess extends FCommand
 		FLocation loc = new FLocation(me.getLocation());
 
 		TerritoryAccess territory = Board.getTerritoryAccessAt(loc);
-		Faction locFaction = territory.getHostFaction();
+		guild locguild = territory.getHostguild();
 		boolean accessAny = Permission.ACCESS_ANY.has(sender, false);
 
 		if (type.isEmpty() || type.equals("view"))
 		{
 			if ( ! accessAny && ! Permission.ACCESS_VIEW.has(sender, true)) return;
-			if ( ! accessAny && ! territory.doesHostFactionMatch(fme))
+			if ( ! accessAny && ! territory.doesHostguildMatch(fme))
 			{
 				msg("<b>This territory isn't controlled by your guild, so you can't view the access list.");
 				return;
 			}
-			showAccessList(territory, locFaction);
+			showAccessList(territory, locguild);
 			return;
 		}
 
 		if ( ! accessAny && ! Permission.ACCESS.has(sender, true)) return;
-		if ( ! accessAny && ! FPerm.ACCESS.has(fme, locFaction, true)) return;
+		if ( ! accessAny && ! FPerm.ACCESS.has(fme, locguild, true)) return;
 
 		boolean doPlayer = true;
 		if (type.equals("g") || type.equals("guild"))
@@ -82,28 +82,28 @@ public class CmdAccess extends FCommand
 		}
 		else
 		{
-			Faction targetFaction = this.argAsFaction(1, myFaction);
-			if (targetFaction == null) return;
-			added = territory.toggleFaction(targetFaction);
-			target = "Guild \""+targetFaction.getTag()+"\"";
+			guild targetguild = this.argAsguild(1, myguild);
+			if (targetguild == null) return;
+			added = territory.toggleguild(targetguild);
+			target = "Guild \""+targetguild.getTag()+"\"";
 		}
 
 		msg("<i>%s has been %s<i> the access list for this territory.", target, TextUtil.parseColor(added ? "<lime>added to" : "<rose>removed from"));
 		SpoutFeatures.updateAccessInfoLoc(loc);
-		showAccessList(territory, locFaction);
+		showAccessList(territory, locguild);
 	}
 
-	private void showAccessList(TerritoryAccess territory, Faction locFaction)
+	private void showAccessList(TerritoryAccess territory, guild locguild)
 	{
-		msg("<i>Host guild %s has %s<i> in this territory.", locFaction.getTag(), TextUtil.parseColor(territory.isHostFactionAllowed() ? "<lime>normal access" : "<rose>restricted access"));
+		msg("<i>Host guild %s has %s<i> in this territory.", locguild.getTag(), TextUtil.parseColor(territory.isHostguildAllowed() ? "<lime>normal access" : "<rose>restricted access"));
 
 		String players = territory.fplayerList();
-		String factions = territory.factionList();
+		String guilds = territory.guildList();
 
-		if (factions.isEmpty())
+		if (guilds.isEmpty())
 			msg("No guilds have been explicitly granted access.");
 		else
-			msg("guilds with explicit access: " + factions);
+			msg("guilds with explicit access: " + guilds);
 
 		if (players.isEmpty())
 			msg("No players have been explicitly granted access.");
