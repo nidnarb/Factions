@@ -1,22 +1,22 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.FPlayer;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.FPlayer;
 import org.bukkit.entity.Player;
 
 public class LandUnclaimAllEvent extends Event
 {	
 	private static final HandlerList handlers = new HandlerList();
 
-	private Faction faction;
+	private guild guild;
 	private FPlayer fplayer;
 
-	public LandUnclaimAllEvent(Faction f, FPlayer p)
+	public LandUnclaimAllEvent(guild g, FPlayer p)
 	{
-		faction = f;
+		guild = g;
 		fplayer = p;
 	}
 
@@ -30,19 +30,19 @@ public class LandUnclaimAllEvent extends Event
 		return handlers;
 	}
 
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return faction;
+		return guild;
 	}
 
-	public String getFactionId()
+	public String getguildId()
 	{
-		return faction.getId();
+		return guild.getId();
 	}
 
-	public String getFactionTag()
+	public String getguildTag()
 	{
-		return faction.getTag();
+		return guild.getTag();
 	}
 
 	public FPlayer getFPlayer()
