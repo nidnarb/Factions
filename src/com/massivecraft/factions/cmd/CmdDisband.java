@@ -1,19 +1,19 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import org.bukkit.Bukkit;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.event.FPlayerLeaveEvent;
-import com.massivecraft.factions.event.FactionDisbandEvent;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.event.FPlayerLeaveEvent;
+import com.massivecraft.guilds.event.guildDisbandEvent;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdDisband extends FCommand
 {
@@ -37,59 +37,59 @@ public class CmdDisband extends FCommand
 	@Override
 	public void perform()
 	{
-		// The faction, default to your own.. but null if console sender.
-		Faction faction = this.argAsFaction(0, fme == null ? null : myFaction);
-		if (faction == null) return;
+		// The guild, default to your own.. but null if console sender.
+		guild guild = this.argAsguild(0, fme == null ? null : myguild);
+		if (guild == null) return;
 		
-		if ( ! FPerm.DISBAND.has(sender, faction, true)) return;
+		if ( ! FPerm.DISBAND.has(sender, guild, true)) return;
 
-		if (faction.getFlag(FFlag.PERMANENT))
+		if (guild.getFlag(FFlag.PERMANENT))
 		{
 			msg("<i>This guild is designated as permanent, so you cannot disband it.");
 			return;
 		}
 
-		FactionDisbandEvent disbandEvent = new FactionDisbandEvent(me, faction.getId());
+		guildDisbandEvent disbandEvent = new guildDisbandEvent(me, guild.getId());
 		Bukkit.getServer().getPluginManager().callEvent(disbandEvent);
 		if(disbandEvent.isCancelled()) return;
 
-		// Send FPlayerLeaveEvent for each player in the faction
-		for ( FPlayer fplayer : faction.getFPlayers() )
+		// Send FPlayerLeaveEvent for each player in the guild
+		for ( FPlayer fplayer : guild.getFPlayers() )
 		{
-			Bukkit.getServer().getPluginManager().callEvent(new FPlayerLeaveEvent(fplayer, faction, FPlayerLeaveEvent.PlayerLeaveReason.DISBAND));
+			Bukkit.getServer().getPluginManager().callEvent(new FPlayerLeaveEvent(fplayer, guild, FPlayerLeaveEvent.PlayerLeaveReason.DISBAND));
 		}
 
 		// Inform all players
 		for (FPlayer fplayer : FPlayers.i.getOnline())
 		{
 			String who = senderIsConsole ? "A server admin" : fme.describeTo(fplayer);
-			if (fplayer.getFaction() == faction)
+			if (fplayer.getguild() == guild)
 			{
 				fplayer.msg("<h>%s<i> disbanded your guild.", who);
 			}
 			else
 			{
-				fplayer.msg("<h>%s<i> disbanded the guild %s.", who, faction.getTag(fplayer));
+				fplayer.msg("<h>%s<i> disbanded the guild %s.", who, guild.getTag(fplayer));
 			}
 		}
-		if (Conf.logFactionDisband)
-			P.p.log("The guild "+faction.getTag()+" ("+faction.getId()+") was disbanded by "+(senderIsConsole ? "console command" : fme.getName())+".");
+		if (Conf.logguildDisband)
+			P.p.log("The guild "+guild.getTag()+" ("+guild.getId()+") was disbanded by "+(senderIsConsole ? "console command" : fme.getName())+".");
 
 		if (Econ.shouldBeUsed() && ! senderIsConsole)
 		{
-			//Give all the faction's money to the disbander
-			double amount = Econ.getBalance(faction.getAccountId());
-			Econ.transferMoney(fme, faction, fme, amount, false);
+			//Give all the guild's money to the disbander
+			double amount = Econ.getBalance(guild.getAccountId());
+			Econ.transferMoney(fme, guild, fme, amount, false);
 			
 			if (amount > 0.0)
 			{
 				String amountString = Econ.moneyString(amount);
 				msg("<i>You have been given the disbanded guild's bank, totaling %s.", amountString);
-				P.p.log(fme.getName() + " has been given bank holdings of "+amountString+" from disbanding "+faction.getTag()+".");
+				P.p.log(fme.getName() + " has been given bank holdings of "+amountString+" from disbanding "+guild.getTag()+".");
 			}
 		}		
 		
-		faction.detach();
+		guild.detach();
 
 		SpoutFeatures.updateTitle(null, null);
 		SpoutFeatures.updateCape(null, null);
