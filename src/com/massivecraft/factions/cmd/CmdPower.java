@@ -1,8 +1,8 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdPower extends FCommand
 {
@@ -13,7 +13,7 @@ public class CmdPower extends FCommand
 		this.aliases.add("power");
 		this.aliases.add("pow");
 		
-		//this.requiredArgs.add("faction tag");
+		//this.requiredArgs.add("guild tag");
 		this.optionalArgs.put("player", "you");
 		
 		this.permission = Permission.POWER.node;
