@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.Collections;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.P;
 
 public class FCmdRoot extends FCommand
 {
@@ -65,8 +65,8 @@ public class FCmdRoot extends FCommand
 		
 		this.disableOnLock = false;
 		
-		this.setHelpShort("The faction base command");
-		this.helpLong.add(p.txt.parseTags("<i>This command contains all faction stuff."));
+		this.setHelpShort("The guild base command");
+		this.helpLong.add(p.txt.parseTags("<i>This command contains all guild stuff."));
 		
 		this.addSubCommand(P.p.cmdAutoHelp);
 		this.addSubCommand(this.cmdList);
