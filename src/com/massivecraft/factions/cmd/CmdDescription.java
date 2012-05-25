@@ -30,7 +30,7 @@ public class CmdDescription extends FCommand
 	public void perform()
 	{
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
-		if ( ! payForCommand(Conf.econCostDesc, "to change faction description", "for changing faction description")) return;
+		if ( ! payForCommand(Conf.econCostDesc, "to change guild description", "for changing guild description")) return;
 
 		myFaction.setDescription(TextUtil.implode(args, " ").replaceAll("(&([a-f0-9]))", "& $2"));  // since "&" color tags seem to work even through plain old FPlayer.sendMessage() for some reason, we need to break those up
 
