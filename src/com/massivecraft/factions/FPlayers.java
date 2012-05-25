@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.gson.reflect.TypeToken;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.zcore.persist.PlayerEntityCollection;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.zcore.persist.PlayerEntityCollection;
 
 public class FPlayers extends PlayerEntityCollection<FPlayer>
 {
@@ -40,10 +40,10 @@ public class FPlayers extends PlayerEntityCollection<FPlayer>
 	{
 		for (FPlayer fplayer : this.get())
 		{
-			if ( ! Factions.i.exists(fplayer.getFactionId()))
+			if ( ! guilds.i.exists(fplayer.getguildId()))
 			{
-				p.log("Reset faction data (invalid faction) for player "+fplayer.getName());
-				fplayer.resetFactionData(false);
+				p.log("Reset guild data (invalid guild) for player "+fplayer.getName());
+				fplayer.resetguildData(false);
 			}
 		}
 	}
@@ -62,15 +62,15 @@ public class FPlayers extends PlayerEntityCollection<FPlayer>
 		{
 			if (fplayer.isOffline() && now - fplayer.getLastLoginTime() > toleranceMillis)
 			{
-				if (Conf.logFactionLeave || Conf.logFactionKick)
+				if (Conf.logguildLeave || Conf.logguildKick)
 					P.p.log("Player "+fplayer.getName()+" was auto-removed due to inactivity.");
 
-				// if player is faction leader, sort out the faction since he's going away
+				// if player is guild leader, sort out the guild since he's going away
 				if (fplayer.getRole() == Rel.LEADER)
 				{
-					Faction faction = fplayer.getFaction();
-					if (faction != null)
-						fplayer.getFaction().promoteNewLeader();
+					guild guild = fplayer.getguild();
+					if (guild != null)
+						fplayer.getguild().promoteNewLeader();
 				}
 
 				fplayer.leave(false);
