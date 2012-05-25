@@ -1,4 +1,4 @@
-package com.massivecraft.factions.integration;
+package com.massivecraft.guilds.integration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,9 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.listeners.FactionsChatListener;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.listeners.guildsChatListener;
 
 import com.earth2me.essentials.IEssentials;
 import com.earth2me.essentials.Teleport;
@@ -122,11 +122,11 @@ public class EssentialsFeatures
 			Player speaker = event.getPlayer();
 			String format = event.getFormat();
 			
-			format = FactionsChatListener.parseTags(format, speaker);
+			format = guildsChatListener.parseTags(format, speaker);
 			
 			event.setFormat(format);
 			// NOTE: above doesn't do relation coloring. if/when we can get a local recipient list from EssentialsLocalChatEvent, we'll probably
-			// want to pass it on to FactionsPlayerListener.onPlayerChat(PlayerChatEvent event) rather than duplicating code
+			// want to pass it on to guildsPlayerListener.onPlayerChat(PlayerChatEvent event) rather than duplicating code
 		}
 	}
 }
