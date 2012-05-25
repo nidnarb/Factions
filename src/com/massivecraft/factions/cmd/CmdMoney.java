@@ -1,6 +1,6 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.P;
 
 public class CmdMoney extends FCommand
 {
