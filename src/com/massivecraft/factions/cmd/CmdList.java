@@ -1,13 +1,13 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.struct.Permission;
 
 
 public class CmdList extends FCommand
@@ -35,19 +35,19 @@ public class CmdList extends FCommand
 	public void perform()
 	{
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
-		if ( ! payForCommand(Conf.econCostList, "to list the factions", "for listing the factions")) return;
+		if ( ! payForCommand(Conf.econCostList, "to list the guilds", "for listing the guilds")) return;
 		
-		ArrayList<Faction> factionList = new ArrayList<Faction>(Factions.i.get());
+		ArrayList<guild> guildList = new ArrayList<guild>(guilds.i.get());
 
-		factionList.remove(Factions.i.getNone());
-		// TODO: Add flag SECRET To factions instead.
-		//factionList.remove(Factions.i.getSafeZone());
-		//factionList.remove(Factions.i.getWarZone());
+		guildList.remove(guilds.i.getNone());
+		// TODO: Add flag SECRET To guilds instead.
+		//guildList.remove(guilds.i.getSafeZone());
+		//guildList.remove(guilds.i.getWarZone());
 		
 		// Sort by total followers first
-		Collections.sort(factionList, new Comparator<Faction>(){
+		Collections.sort(guildList, new Comparator<guild>(){
 			@Override
-			public int compare(Faction f1, Faction f2) {
+			public int compare(guild f1, guild f2) {
 				int f1Size = f1.getFPlayers().size();
 				int f2Size = f2.getFPlayers().size();
 				if (f1Size < f2Size)
@@ -59,9 +59,9 @@ public class CmdList extends FCommand
 		});
 
 		// Then sort by how many members are online now
-		Collections.sort(factionList, new Comparator<Faction>(){
+		Collections.sort(guildList, new Comparator<guild>(){
 			@Override
-			public int compare(Faction f1, Faction f2) {
+			public int compare(guild f1, guild f2) {
 				int f1Size = f1.getFPlayersWhereOnline(true).size();
 				int f2Size = f2.getFPlayersWhereOnline(true).size();
 				if (f1Size < f2Size)
@@ -73,20 +73,20 @@ public class CmdList extends FCommand
 		});
 		
 		ArrayList<String> lines = new ArrayList<String>();
-		lines.add(p.txt.parse("<i>Factionless<i> %d online", Factions.i.getNone().getFPlayersWhereOnline(true).size()));
-		for (Faction faction : factionList)
+		lines.add(p.txt.parse("<i>guildless<i> %d online", guilds.i.getNone().getFPlayersWhereOnline(true).size()));
+		for (guild guild : guildList)
 		{
 			lines.add(p.txt.parse("%s<i> %d/%d online, %d/%d/%d",
-				faction.getTag(fme),
-				faction.getFPlayersWhereOnline(true).size(),
-				faction.getFPlayers().size(),
-				faction.getLandRounded(),
-				faction.getPowerRounded(),
-				faction.getPowerMaxRounded())
+				guild.getTag(fme),
+				guild.getFPlayersWhereOnline(true).size(),
+				guild.getFPlayers().size(),
+				guild.getLandRounded(),
+				guild.getPowerRounded(),
+				guild.getPowerMaxRounded())
 			);
 		}
 		
-		sendMessage(p.txt.getPage(lines, this.argAsInt(0, 1), "Faction List"));
+		sendMessage(p.txt.getPage(lines, this.argAsInt(0, 1), "guild List"));
 	}
 	
 }
