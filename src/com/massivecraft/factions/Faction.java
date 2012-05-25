@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.util.*;
 
@@ -6,24 +6,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.iface.EconomyParticipator;
-import com.massivecraft.factions.iface.RelationParticipator;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.util.*;
-import com.massivecraft.factions.zcore.persist.Entity;
+import com.massivecraft.guilds.iface.EconomyParticipator;
+import com.massivecraft.guilds.iface.RelationParticipator;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.util.*;
+import com.massivecraft.guilds.zcore.persist.Entity;
 
 
-public class Faction extends Entity implements EconomyParticipator
+public class guild extends Entity implements EconomyParticipator
 {
 	// FIELD: relationWish
 	private Map<String, Rel> relationWish;
 
 	// FIELD: fplayers
-	// speedy lookup of players in faction
+	// speedy lookup of players in guild
 	private transient Set<FPlayer> fplayers = new HashSet<FPlayer>();
 
 	// FIELD: invites
@@ -52,7 +52,7 @@ public class Faction extends Entity implements EconomyParticipator
 	}
 	public void setTag(String str)
 	{
-		if (Conf.factionTagForceUpperCase)
+		if (Conf.guildTagForceUpperCase)
 		{
 			str = str.toUpperCase();
 		}
@@ -76,10 +76,10 @@ public class Faction extends Entity implements EconomyParticipator
 	}
 	public void confirmValidHome()
 	{
-		if (!Conf.homesMustBeInClaimedTerritory || this.home == null || (this.home.getLocation() != null && Board.getFactionAt(new FLocation(this.home.getLocation())) == this))
+		if (!Conf.homesMustBeInClaimedTerritory || this.home == null || (this.home.getLocation() != null && Board.getguildAt(new FLocation(this.home.getLocation())) == this))
 			return;
 
-		msg("<b>Your faction home has been un-set since it is no longer in your territory.");
+		msg("<b>Your guild home has been un-set since it is no longer in your territory.");
 		this.home = null;
 	}
 	
@@ -88,7 +88,7 @@ public class Faction extends Entity implements EconomyParticipator
 	public double money;
 	public String getAccountId()
 	{
-		String aid = "faction-"+this.getId();
+		String aid = "guild-"+this.getId();
 
 		// We need to override the default money given to players.
 		if ( ! Econ.hasAccount(aid))
@@ -103,7 +103,7 @@ public class Faction extends Entity implements EconomyParticipator
 	public void setCape(String val) { this.cape = val; SpoutFeatures.updateCape(this, null); }
 
 	// FIELD: powerBoost
-	// special increase/decrease to default and max power for this faction
+	// special increase/decrease to default and max power for this guild
 	private double powerBoost;
 	public double getPowerBoost() { return this.powerBoost; }
 	public void setPowerBoost(double powerBoost) { this.powerBoost = powerBoost; }
@@ -119,7 +119,7 @@ public class Faction extends Entity implements EconomyParticipator
 	}
 	public void setFlag(FFlag flag, boolean value)
 	{
-		if (Conf.factionFlagDefaults.get(flag).equals(value))
+		if (Conf.guildFlagDefaults.get(flag).equals(value))
 		{
 			this.flagOverrides.remove(flag);
 			return;
@@ -190,13 +190,13 @@ public class Faction extends Entity implements EconomyParticipator
 	// Construct
 	// -------------------------------------------- //
 	
-	public Faction()
+	public guild()
 	{
 		this.relationWish = new HashMap<String, Rel>();
 		this.invites = new HashSet<String>();
-		this.open = Conf.newFactionsDefaultOpen;
+		this.open = Conf.newguildsDefaultOpen;
 		this.tag = "???";
-		this.description = "Default faction description :(";
+		this.description = "Default guild description :(";
 		this.money = 0.0;
 		this.powerBoost = 0.0;
 		this.flagOverrides = new LinkedHashMap<FFlag, Boolean>();
@@ -255,38 +255,38 @@ public class Faction extends Entity implements EconomyParticipator
 		return RelationUtil.getColorOfThatToMe(this, observer);
 	}
 	
-	public Rel getRelationWish(Faction otherFaction)
+	public Rel getRelationWish(guild otherguild)
 	{
-		if (this.relationWish.containsKey(otherFaction.getId()))
+		if (this.relationWish.containsKey(otherguild.getId()))
 		{
-			return this.relationWish.get(otherFaction.getId());
+			return this.relationWish.get(otherguild.getId());
 		}
 		return Rel.NEUTRAL;
 	}
 	
-	public void setRelationWish(Faction otherFaction, Rel relation)
+	public void setRelationWish(guild otherguild, Rel relation)
 	{
-		if (this.relationWish.containsKey(otherFaction.getId()) && relation.equals(Rel.NEUTRAL))
+		if (this.relationWish.containsKey(otherguild.getId()) && relation.equals(Rel.NEUTRAL))
 		{
-			this.relationWish.remove(otherFaction.getId());
+			this.relationWish.remove(otherguild.getId());
 		}
 		else
 		{
-			this.relationWish.put(otherFaction.getId(), relation);
+			this.relationWish.put(otherguild.getId(), relation);
 		}
 	}
 	
-	public Map<Rel, List<String>> getFactionTagsPerRelation(RelationParticipator rp)
+	public Map<Rel, List<String>> getguildTagsPerRelation(RelationParticipator rp)
 	{
 		Map<Rel, List<String>> ret = new HashMap<Rel, List<String>>();
 		for (Rel rel : Rel.values())
 		{
 			ret.put(rel, new ArrayList<String>());
 		}
-		for (Faction faction : Factions.i.get())
+		for (guild guild : guilds.i.get())
 		{
-			Rel relation = faction.getRelationTo(this);
-			ret.get(relation).add(faction.getTag(rp));
+			Rel relation = guild.getRelationTo(this);
+			ret.get(relation).add(guild.getTag(rp));
 		}
 		return ret;
 	}
@@ -307,9 +307,9 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			ret += fplayer.getPower();
 		}
-		if (Conf.powerFactionMax > 0 && ret > Conf.powerFactionMax)
+		if (Conf.powerguildMax > 0 && ret > Conf.powerguildMax)
 		{
-			ret = Conf.powerFactionMax;
+			ret = Conf.powerguildMax;
 		}
 		return ret + this.powerBoost;
 	}
@@ -326,9 +326,9 @@ public class Faction extends Entity implements EconomyParticipator
 		{
 			ret += fplayer.getPowerMax();
 		}
-		if (Conf.powerFactionMax > 0 && ret > Conf.powerFactionMax)
+		if (Conf.powerguildMax > 0 && ret > Conf.powerguildMax)
 		{
-			ret = Conf.powerFactionMax;
+			ret = Conf.powerguildMax;
 		}
 		return ret + this.powerBoost;
 	}
@@ -344,12 +344,12 @@ public class Faction extends Entity implements EconomyParticipator
 	}
 	
 	public int getLandRounded() {
-		return Board.getFactionCoordCount(this);
+		return Board.getguildCoordCount(this);
 	}
 	
 	public int getLandRoundedInWorld(String worldName)
 	{
-		return Board.getFactionCoordCountInWorld(this, worldName);
+		return Board.getguildCoordCountInWorld(this, worldName);
 	}
 	
 	public boolean hasLandInflation()
@@ -361,7 +361,7 @@ public class Faction extends Entity implements EconomyParticipator
 	// FPlayers
 	// -------------------------------
 
-	// maintain the reference list of FPlayers in this faction
+	// maintain the reference list of FPlayers in this guild
 	public void refreshFPlayers()
 	{
 		fplayers.clear();
@@ -369,7 +369,7 @@ public class Faction extends Entity implements EconomyParticipator
 
 		for (FPlayer fplayer : FPlayers.i.get())
 		{
-			if (fplayer.getFaction() == this)
+			if (fplayer.getguild() == this)
 			{
 				fplayers.add(fplayer);
 			}
@@ -448,7 +448,7 @@ public class Faction extends Entity implements EconomyParticipator
 		for (Player player: P.p.getServer().getOnlinePlayers())
 		{
 			FPlayer fplayer = FPlayers.i.get(player);
-			if (fplayer.getFaction() == this)
+			if (fplayer.getguild() == this)
 			{
 				ret.add(player);
 			}
@@ -457,11 +457,11 @@ public class Faction extends Entity implements EconomyParticipator
 		return ret;
 	}
 
-	// used when current leader is about to be removed from the faction; promotes new leader, or disbands faction if no other members left
+	// used when current leader is about to be removed from the guild; promotes new leader, or disbands guild if no other members left
 	public void promoteNewLeader()
 	{
 		if (! this.isNormal()) return;
-		if (this.getFlag(FFlag.PERMANENT) && Conf.permanentFactionsDisableLeaderPromotion) return;
+		if (this.getFlag(FFlag.PERMANENT) && Conf.permanentguildsDisableLeaderPromotion) return;
 
 		FPlayer oldLeader = this.getFPlayerLeader();
 
@@ -471,7 +471,7 @@ public class Faction extends Entity implements EconomyParticipator
 			replacements = this.getFPlayersWhereRole(Rel.MEMBER);
 
 		if (replacements == null || replacements.isEmpty())
-		{	// faction leader is the only member; one-man faction
+		{	// guild leader is the only member; one-man guild
 			if (this.getFlag(FFlag.PERMANENT))
 			{
 				if (oldLeader != null)
@@ -479,24 +479,24 @@ public class Faction extends Entity implements EconomyParticipator
 				return;
 			}
 
-			// no members left and faction isn't permanent, so disband it
-			if (Conf.logFactionDisband)
-				P.p.log("The faction "+this.getTag()+" ("+this.getId()+") has been disbanded since it has no members left.");
+			// no members left and guild isn't permanent, so disband it
+			if (Conf.logguildDisband)
+				P.p.log("The guild "+this.getTag()+" ("+this.getId()+") has been disbanded since it has no members left.");
 
 			for (FPlayer fplayer : FPlayers.i.getOnline())
 			{
-				fplayer.msg("The faction %s<i> was disbanded.", this.getTag(fplayer));
+				fplayer.msg("The guild %s<i> was disbanded.", this.getTag(fplayer));
 			}
 
 			this.detach();
 		}
 		else
-		{	// promote new faction leader
+		{	// promote new guild leader
 			if (oldLeader != null)
 				oldLeader.setRole(Rel.MEMBER);
 			replacements.get(0).setRole(Rel.LEADER);
-			this.msg("<i>Faction leader <h>%s<i> has been removed. %s<i> has been promoted as the new faction leader.", oldLeader == null ? "" : oldLeader.getName(), replacements.get(0).getName());
-			P.p.log("Faction "+this.getTag()+" ("+this.getId()+") leader was removed. Replacement leader: "+replacements.get(0).getName());
+			this.msg("<i>guild leader <h>%s<i> has been removed. %s<i> has been promoted as the new guild leader.", oldLeader == null ? "" : oldLeader.getName(), replacements.get(0).getName());
+			P.p.log("guild "+this.getTag()+" ("+this.getId()+") leader was removed. Replacement leader: "+replacements.get(0).getName());
 		}
 	}
 
