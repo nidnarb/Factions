@@ -1,6 +1,6 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.guilds.struct.Rel;
 
 public class CmdRelationNeutral extends FRelationCommand
 {
