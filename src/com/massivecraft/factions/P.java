@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -13,33 +13,33 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.massivecraft.factions.adapters.FFlagTypeAdapter;
-import com.massivecraft.factions.adapters.FPermTypeAdapter;
-import com.massivecraft.factions.adapters.LocationTypeAdapter;
-import com.massivecraft.factions.adapters.RelTypeAdapter;
-import com.massivecraft.factions.cmd.*;
-import com.massivecraft.factions.integration.capi.CapiFeatures;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.integration.EssentialsFeatures;
-import com.massivecraft.factions.integration.HerochatFeatures;
-import com.massivecraft.factions.integration.LWCFeatures;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.integration.Worldguard;
-import com.massivecraft.factions.listeners.FactionsBlockListener;
-import com.massivecraft.factions.listeners.FactionsChatListener;
-import com.massivecraft.factions.listeners.FactionsEntityListener;
-import com.massivecraft.factions.listeners.FactionsExploitListener;
-import com.massivecraft.factions.listeners.FactionsAppearanceListener;
-import com.massivecraft.factions.listeners.FactionsPlayerListener;
-import com.massivecraft.factions.listeners.FactionsServerListener;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.struct.TerritoryAccess;
-import com.massivecraft.factions.util.AutoLeaveTask;
-import com.massivecraft.factions.util.LazyLocation;
-import com.massivecraft.factions.zcore.MPlugin;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.adapters.FFlagTypeAdapter;
+import com.massivecraft.guilds.adapters.FPermTypeAdapter;
+import com.massivecraft.guilds.adapters.LocationTypeAdapter;
+import com.massivecraft.guilds.adapters.RelTypeAdapter;
+import com.massivecraft.guilds.cmd.*;
+import com.massivecraft.guilds.integration.capi.CapiFeatures;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.integration.EssentialsFeatures;
+import com.massivecraft.guilds.integration.HerochatFeatures;
+import com.massivecraft.guilds.integration.LWCFeatures;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.integration.Worldguard;
+import com.massivecraft.guilds.listeners.guildsBlockListener;
+import com.massivecraft.guilds.listeners.guildsChatListener;
+import com.massivecraft.guilds.listeners.guildsEntityListener;
+import com.massivecraft.guilds.listeners.guildsExploitListener;
+import com.massivecraft.guilds.listeners.guildsAppearanceListener;
+import com.massivecraft.guilds.listeners.guildsPlayerListener;
+import com.massivecraft.guilds.listeners.guildsServerListener;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.struct.TerritoryAccess;
+import com.massivecraft.guilds.util.AutoLeaveTask;
+import com.massivecraft.guilds.util.LazyLocation;
+import com.massivecraft.guilds.zcore.MPlugin;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 import com.google.gson.GsonBuilder;
 
@@ -50,13 +50,13 @@ public class P extends MPlugin
 	public static P p;
 	
 	// Listeners
-	public final FactionsPlayerListener playerListener;
-	public final FactionsChatListener chatListener;
-	public final FactionsEntityListener entityListener;
-	public final FactionsExploitListener exploitListener;
-	public final FactionsBlockListener blockListener;
-	public final FactionsServerListener serverListener;
-	public final FactionsAppearanceListener appearanceListener;
+	public final guildsPlayerListener playerListener;
+	public final guildsChatListener chatListener;
+	public final guildsEntityListener entityListener;
+	public final guildsExploitListener exploitListener;
+	public final guildsBlockListener blockListener;
+	public final guildsServerListener serverListener;
+	public final guildsAppearanceListener appearanceListener;
 	
 	// Persistance related
 	private boolean locked = false;
@@ -71,13 +71,13 @@ public class P extends MPlugin
 	public P()
 	{
 		p = this;
-		this.playerListener = new FactionsPlayerListener(this);
-		this.chatListener = new FactionsChatListener(this);
-		this.entityListener = new FactionsEntityListener(this);
-		this.exploitListener = new FactionsExploitListener();
-		this.blockListener = new FactionsBlockListener(this);
-		this.serverListener = new FactionsServerListener(this);
-		this.appearanceListener = new FactionsAppearanceListener(this);
+		this.playerListener = new guildsPlayerListener(this);
+		this.chatListener = new guildsChatListener(this);
+		this.entityListener = new guildsEntityListener(this);
+		this.exploitListener = new guildsExploitListener();
+		this.blockListener = new guildsBlockListener(this);
+		this.serverListener = new guildsServerListener(this);
+		this.appearanceListener = new guildsAppearanceListener(this);
 	}
 
 
@@ -90,7 +90,7 @@ public class P extends MPlugin
 		// Load Conf from disk
 		Conf.load();
 		FPlayers.i.loadFromDisc();
-		Factions.i.loadFromDisc();
+		guilds.i.loadFromDisc();
 		Board.load();
 		
 		// Add Base Commands
@@ -192,7 +192,7 @@ public class P extends MPlugin
 	@Override
 	public boolean handleCommand(CommandSender sender, String commandString, boolean testOnly)
 	{
-		if (sender instanceof Player && FactionsPlayerListener.preventCommand(commandString, (Player)sender)) return true;
+		if (sender instanceof Player && guildsPlayerListener.preventCommand(commandString, (Player)sender)) return true;
 
 		return super.handleCommand(sender, commandString, testOnly);
 	}
@@ -220,47 +220,47 @@ public class P extends MPlugin
 		return 3;
 	}
 
-	// If another plugin is handling insertion of chat tags, this should be used to notify Factions
-	public void handleFactionTagExternally(boolean notByFactions)
+	// If another plugin is handling insertion of chat tags, this should be used to notify guilds
+	public void handleguildTagExternally(boolean notByguilds)
 	{
-		Conf.chatTagHandledByAnotherPlugin = notByFactions;
+		Conf.chatTagHandledByAnotherPlugin = notByguilds;
 	}
 
-	// Simply put, should this chat event be left for Factions to handle? For now, that means players with Faction Chat
-	// enabled or use of the Factions f command without a slash; combination of isPlayerFactionChatting() and isFactionsCommand()
+	// Simply put, should this chat event be left for guilds to handle? For now, that means players with guild Chat
+	// enabled or use of the guilds f command without a slash; combination of isPlayerguildChatting() and isguildsCommand()
 	
 	
-	public boolean shouldLetFactionsHandleThisChat(PlayerChatEvent event)
+	public boolean shouldLetguildsHandleThisChat(PlayerChatEvent event)
 	{
 		if (event == null) return false;
-		return (isPlayerFactionChatting(event.getPlayer()) || isFactionsCommand(event.getMessage()));
+		return (isPlayerguildChatting(event.getPlayer()) || isguildsCommand(event.getMessage()));
 	}
 
-	// Does player have Faction Chat enabled? If so, chat plugins should preferably not do channels,
-	// local chat, or anything else which targets individual recipients, so Faction Chat can be done
+	// Does player have guild Chat enabled? If so, chat plugins should preferably not do channels,
+	// local chat, or anything else which targets individual recipients, so guild Chat can be done
 	/**
-	 * @deprecated  As of release 1.8, there is no built in faction chat.
+	 * @deprecated  As of release 1.8, there is no built in guild chat.
 	 */
-	public boolean isPlayerFactionChatting(Player player)
+	public boolean isPlayerguildChatting(Player player)
 	{
 		return false;
 	}
 
-	// Is this chat message actually a Factions command, and thus should be left alone by other plugins?
-	public boolean isFactionsCommand(String check)
+	// Is this chat message actually a guilds command, and thus should be left alone by other plugins?
+	public boolean isguildsCommand(String check)
 	{
 		if (check == null || check.isEmpty()) return false;
 		return this.handleCommand(null, check, true);
 	}
 
-	// Get a player's faction tag (faction name), mainly for usage by chat plugins for local/channel chat
-	public String getPlayerFactionTag(Player player)
+	// Get a player's guild tag (guild name), mainly for usage by chat plugins for local/channel chat
+	public String getPlayerguildTag(Player player)
 	{
-		return getPlayerFactionTagRelation(player, null);
+		return getPlayerguildTagRelation(player, null);
 	}
 
 	// Same as above, but with relation (enemy/neutral/ally) coloring potentially added to the tag
-	public String getPlayerFactionTagRelation(Player speaker, Player listener)
+	public String getPlayerguildTagRelation(Player speaker, Player listener)
 	{
 		String tag = "~";
 
@@ -287,7 +287,7 @@ public class P extends MPlugin
 		return tag;
 	}
 
-	// Get a player's title within their faction, mainly for usage by chat plugins for local/channel chat
+	// Get a player's title within their guild, mainly for usage by chat plugins for local/channel chat
 	public String getPlayerTitle(Player player)
 	{
 		if (player == null)
@@ -300,25 +300,25 @@ public class P extends MPlugin
 		return me.getTitle().trim();
 	}
 
-	// Get a list of all faction tags (names)
-	public Set<String> getFactionTags()
+	// Get a list of all guild tags (names)
+	public Set<String> getguildTags()
 	{
 		Set<String> tags = new HashSet<String>();
-		for (Faction faction : Factions.i.get())
+		for (guild guild : guilds.i.get())
 		{
-			tags.add(faction.getTag());
+			tags.add(guild.getTag());
 		}
 		return tags;
 	}
 
-	// Get a list of all players in the specified faction
-	public Set<String> getPlayersInFaction(String factionTag)
+	// Get a list of all players in the specified guild
+	public Set<String> getPlayersInguild(String guildTag)
 	{
 		Set<String> players = new HashSet<String>();
-		Faction faction = Factions.i.getByTag(factionTag);
-		if (faction != null)
+		guild guild = guilds.i.getByTag(guildTag);
+		if (guild != null)
 		{
-			for (FPlayer fplayer : faction.getFPlayers())
+			for (FPlayer fplayer : guild.getFPlayers())
 			{
 				players.add(fplayer.getName());
 			}
@@ -326,14 +326,14 @@ public class P extends MPlugin
 		return players;
 	}
 
-	// Get a list of all online players in the specified faction
-	public Set<String> getOnlinePlayersInFaction(String factionTag)
+	// Get a list of all online players in the specified guild
+	public Set<String> getOnlinePlayersInguild(String guildTag)
 	{
 		Set<String> players = new HashSet<String>();
-		Faction faction = Factions.i.getByTag(factionTag);
-		if (faction != null)
+		guild guild = guilds.i.getByTag(guildTag);
+		if (guild != null)
 		{
-			for (FPlayer fplayer : faction.getFPlayersWhereOnline(true))
+			for (FPlayer fplayer : guild.getFPlayersWhereOnline(true))
 			{
 				players.add(fplayer.getName());
 			}
@@ -344,18 +344,18 @@ public class P extends MPlugin
 	// check if player is allowed to build/destroy in a particular location
 	public boolean isPlayerAllowedToBuildHere(Player player, Location location)
 	{
-		return FactionsBlockListener.playerCanBuildDestroyBlock(player, location.getBlock(), "", true);
+		return guildsBlockListener.playerCanBuildDestroyBlock(player, location.getBlock(), "", true);
 	}
 
 	// check if player is allowed to interact with the specified block (doors/chests/whatever)
 	public boolean isPlayerAllowedToInteractWith(Player player, Block block)
 	{
-		return FactionsPlayerListener.canPlayerUseBlock(player, block, true);
+		return guildsPlayerListener.canPlayerUseBlock(player, block, true);
 	}
 
 	// check if player is allowed to use a specified item (flint&steel, buckets, etc) in a particular location
 	public boolean isPlayerAllowedToUseThisHere(Player player, Location location, Material material)
 	{
-		return FactionsPlayerListener.playerCanUseItemHere(player, location, material, true);
+		return guildsPlayerListener.playerCanUseItemHere(player, location, material, true);
 	}
 }
