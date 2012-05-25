@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.struct.Permission;
 
 
 public class CmdMap extends FCommand
@@ -61,7 +61,7 @@ public class CmdMap extends FCommand
 	
 	public void showMap()
 	{
-		sendMessage(Board.getMap(myFaction, new FLocation(fme), fme.getPlayer().getLocation().getYaw()));
+		sendMessage(Board.getMap(myguild, new FLocation(fme), fme.getPlayer().getLocation().getYaw()));
 	}
 	
 }
