@@ -1,11 +1,11 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.struct.Permission;
 
 
 public class CmdHelp extends FCommand
