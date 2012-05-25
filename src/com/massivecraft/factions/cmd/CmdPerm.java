@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.struct.Rel;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.struct.Rel;
 
 public class CmdPerm extends FCommand
 {
@@ -13,7 +13,7 @@ public class CmdPerm extends FCommand
 		super();
 		this.aliases.add("perm");
 		
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		this.optionalArgs.put("perm", "all");
 		this.optionalArgs.put("relation", "read");
 		this.optionalArgs.put("yes/no", "read");
@@ -32,36 +32,36 @@ public class CmdPerm extends FCommand
 	@Override
 	public void perform()
 	{
-		Faction faction = myFaction;
+		guild guild = myguild;
 		if (this.argIsSet(0))
 		{
-			faction = this.argAsFaction(0);
+			guild = this.argAsguild(0);
 		}
-		if (faction == null) return;
+		if (guild == null) return;
 		
 		if ( ! this.argIsSet(1))
 		{
-			msg(p.txt.titleize("Perms for " + faction.describeTo(fme, true)));
+			msg(p.txt.titleize("Perms for " + guild.describeTo(fme, true)));
 			msg(FPerm.getStateHeaders());
 			for (FPerm perm : FPerm.values())
 			{
-				msg(perm.getStateInfo(faction.getPermittedRelations(perm), true));
+				msg(perm.getStateInfo(guild.getPermittedRelations(perm), true));
 			}
 			return;
 		}
 		
-		FPerm perm = this.argAsFactionPerm(1);
+		FPerm perm = this.argAsguildPerm(1);
 		if (perm == null) return;
 		if ( ! this.argIsSet(2))
 		{
-			msg(p.txt.titleize("Perm for " + faction.describeTo(fme, true)));
+			msg(p.txt.titleize("Perm for " + guild.describeTo(fme, true)));
 			msg(FPerm.getStateHeaders());
-			msg(perm.getStateInfo(faction.getPermittedRelations(perm), true));
+			msg(perm.getStateInfo(guild.getPermittedRelations(perm), true));
 			return;
 		}
 		
-		// Do the sender have the right to change perms for this faction?
-		if ( ! FPerm.PERMS.has(sender, faction, true)) return;
+		// Do the sender have the right to change perms for this guild?
+		if ( ! FPerm.PERMS.has(sender, guild, true)) return;
 		
 		Rel rel = this.argAsRel(2);
 		if (rel == null) return;
@@ -70,17 +70,17 @@ public class CmdPerm extends FCommand
 		if (val == null) return;
 		
 		// Do the change
-		faction.setRelationPermitted(perm, rel, val);
+		guild.setRelationPermitted(perm, rel, val);
 		
 		// The following is to make sure the leader always has the right to change perms if that is our goal.
 		if (perm == FPerm.PERMS && FPerm.PERMS.getDefault().contains(Rel.LEADER))
 		{
-			faction.setRelationPermitted(FPerm.PERMS, Rel.LEADER, true);
+			guild.setRelationPermitted(FPerm.PERMS, Rel.LEADER, true);
 		}
 		
-		msg(p.txt.titleize("Perm for " + faction.describeTo(fme, true)));
+		msg(p.txt.titleize("Perm for " + guild.describeTo(fme, true)));
 		msg(FPerm.getStateHeaders());
-		msg(perm.getStateInfo(faction.getPermittedRelations(perm), true));
+		msg(perm.getStateInfo(guild.getPermittedRelations(perm), true));
 	}
 	
 }
