@@ -1,18 +1,18 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
 
 public class FPlayerLeaveEvent extends Event implements Cancellable
 {
 	private static final HandlerList handlers = new HandlerList();
 	private PlayerLeaveReason reason;
 	FPlayer FPlayer;
-	Faction Faction;
+	guild guild;
 	boolean cancelled = false;
 
 	public enum PlayerLeaveReason
@@ -20,10 +20,10 @@ public class FPlayerLeaveEvent extends Event implements Cancellable
 		KICKED, DISBAND, RESET, JOINOTHER, LEAVE
 	}
 
-	public FPlayerLeaveEvent(FPlayer p, Faction f, PlayerLeaveReason r)
+	public FPlayerLeaveEvent(FPlayer p, guild f, PlayerLeaveReason r)
 	{
 		FPlayer = p;
-		Faction = f;
+		guild = f;
 		reason = r;
 	}
 
@@ -47,9 +47,9 @@ public class FPlayerLeaveEvent extends Event implements Cancellable
 		return FPlayer;
 	}
 	
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return Faction;
+		return guild;
 	}
 
 	@Override
