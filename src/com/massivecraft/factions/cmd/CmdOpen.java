@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdOpen extends FCommand
 {
@@ -28,21 +28,21 @@ public class CmdOpen extends FCommand
 	public void perform()
 	{
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
-		if ( ! payForCommand(Conf.econCostOpen, "to open or close the faction", "for opening or closing the faction")) return;
+		if ( ! payForCommand(Conf.econCostOpen, "to open or close the guild", "for opening or closing the guild")) return;
 
-		myFaction.setOpen(this.argAsBool(0, ! myFaction.getOpen()));
+		myguild.setOpen(this.argAsBool(0, ! myguild.getOpen()));
 		
-		String open = myFaction.getOpen() ? "open" : "closed";
+		String open = myguild.getOpen() ? "open" : "closed";
 		
 		// Inform
-		myFaction.msg("%s<i> changed the faction to <h>%s<i>.", fme.describeTo(myFaction, true), open);
-		for (Faction faction : Factions.i.get())
+		myguild.msg("%s<i> changed the guild to <h>%s<i>.", fme.describeTo(myguild, true), open);
+		for (guild guild : guilds.i.get())
 		{
-			if (faction == myFaction)
+			if (guild == myguild)
 			{
 				continue;
 			}
-			faction.msg("<i>The faction %s<i> is now %s", myFaction.getTag(faction), open);
+			guild.msg("<i>The guild %s<i> is now %s", myguild.getTag(guild), open);
 		}
 	}
 	
