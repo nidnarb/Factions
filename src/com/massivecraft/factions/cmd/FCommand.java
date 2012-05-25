@@ -1,21 +1,21 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.zcore.MCommand;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.zcore.MCommand;
 
 
 public abstract class FCommand extends MCommand<P>
@@ -23,7 +23,7 @@ public abstract class FCommand extends MCommand<P>
 	public boolean disableOnLock;
 	
 	public FPlayer fme;
-	public Faction myFaction;
+	public guild myguild;
 	public boolean senderMustBeMember;
 	public boolean senderMustBeOfficer;
 	public boolean senderMustBeLeader;
@@ -51,12 +51,12 @@ public abstract class FCommand extends MCommand<P>
 		if (sender instanceof Player)
 		{
 			this.fme = FPlayers.i.get((Player)sender);
-			this.myFaction = this.fme.getFaction();
+			this.myguild = this.fme.getguild();
 		}
 		else
 		{
 			this.fme = null;
-			this.myFaction = null;
+			this.myguild = null;
 		}
 		super.execute(sender, args, commandChain);
 	}
@@ -66,19 +66,19 @@ public abstract class FCommand extends MCommand<P>
 	{
 		if (p.getLocked() && this.disableOnLock)
 		{
-			msg("<b>Factions was locked by an admin. Please try again later.");
+			msg("<b>guilds was locked by an admin. Please try again later.");
 			return false;
 		}
 		
 		if (this.isMoneyCommand && ! Conf.econEnabled)
 		{
-			msg("<b>Faction economy features are disabled on this server.");
+			msg("<b>guild economy features are disabled on this server.");
 			return false;
 		}
 		
 		if (this.isMoneyCommand && ! Conf.bankEnabled)
 		{
-			msg("<b>The faction bank system is disabled on this server.");
+			msg("<b>The guild bank system is disabled on this server.");
 			return false;
 		}
 		
@@ -97,21 +97,21 @@ public abstract class FCommand extends MCommand<P>
 		
 		FPlayer fplayer = FPlayers.i.get((Player)sender);
 		
-		if ( ! fplayer.hasFaction())
+		if ( ! fplayer.hasguild())
 		{
-			sender.sendMessage(p.txt.parse("<b>You are not member of any faction."));
+			sender.sendMessage(p.txt.parse("<b>You are not member of any guild."));
 			return false;
 		}
 		
 		if (this.senderMustBeOfficer && ! fplayer.getRole().isAtLeast(Rel.OFFICER))
 		{
-			sender.sendMessage(p.txt.parse("<b>Only faction moderators can %s.", this.getHelpShort()));
+			sender.sendMessage(p.txt.parse("<b>Only guild moderators can %s.", this.getHelpShort()));
 			return false;
 		}
 		
 		if (this.senderMustBeLeader && ! fplayer.getRole().isAtLeast(Rel.LEADER))
 		{
-			sender.sendMessage(p.txt.parse("<b>Only faction admins can %s.", this.getHelpShort()));
+			sender.sendMessage(p.txt.parse("<b>Only guild admins can %s.", this.getHelpShort()));
 			return false;
 		}
 			
@@ -122,13 +122,13 @@ public abstract class FCommand extends MCommand<P>
 	// Assertions
 	// -------------------------------------------- //
 
-	public boolean assertHasFaction()
+	public boolean assertHasguild()
 	{
 		if (me == null) return true;
 		
-		if ( ! fme.hasFaction())
+		if ( ! fme.hasguild())
 		{
-			sendMessage("You are not member of any faction.");
+			sendMessage("You are not member of any guild.");
 			return false;
 		}
 		return true;
@@ -218,65 +218,65 @@ public abstract class FCommand extends MCommand<P>
 		return this.argAsBestFPlayerMatch(idx, null);
 	}
 	
-	// FACTION ======================
-	public Faction strAsFaction(String name, Faction def, boolean msg)
+	// guild ======================
+	public guild strAsguild(String name, guild def, boolean msg)
 	{
-		Faction ret = def;
+		guild ret = def;
 		
 		if (name != null)
 		{
-			Faction faction = null;
+			guild guild = null;
 			
 			// First we try an exact match
-			if (faction == null)
+			if (guild == null)
 			{
-				faction = Factions.i.getByTag(name);
+				guild = guilds.i.getByTag(name);
 			}
 			
-			// Next we match faction tags
-			if (faction == null)
+			// Next we match guild tags
+			if (guild == null)
 			{
-				faction = Factions.i.getBestTagMatch(name);
+				guild = guilds.i.getBestTagMatch(name);
 			}
 				
 			// Next we match player names
-			if (faction == null)
+			if (guild == null)
 			{
 				FPlayer fplayer = FPlayers.i.getBestIdMatch(name);
 				if (fplayer != null)
 				{
-					faction = fplayer.getFaction();
+					guild = fplayer.getguild();
 				}
 			}
 			
-			if (faction != null)
+			if (guild != null)
 			{
-				ret = faction;
+				ret = guild;
 			}
 		}
 		
 		if (msg && ret == null)
 		{
-			this.msg("<b>The faction or player \"<p>%s<b>\" could not be found.", name);
+			this.msg("<b>The guild or player \"<p>%s<b>\" could not be found.", name);
 		}
 		
 		return ret;
 	}
-	public Faction argAsFaction(int idx, Faction def, boolean msg)
+	public guild argAsguild(int idx, guild def, boolean msg)
 	{
-		return this.strAsFaction(this.argAsString(idx), def, msg);
+		return this.strAsguild(this.argAsString(idx), def, msg);
 	}
-	public Faction argAsFaction(int idx, Faction def)
+	public guild argAsguild(int idx, guild def)
 	{
-		return this.argAsFaction(idx, def, true);
+		return this.argAsguild(idx, def, true);
 	}
-	public Faction argAsFaction(int idx)
+	public guild argAsguild(int idx)
 	{
-		return this.argAsFaction(idx, null);
+		return this.argAsguild(idx, null);
 	}
 	
-	// FACTION FLAG ======================
-	public FFlag strAsFactionFlag(String name, FFlag def, boolean msg)
+	// guild FLAG ======================
+	public FFlag strAsguildFlag(String name, FFlag def, boolean msg)
 	{
 		FFlag ret = def;
 		
@@ -291,26 +291,26 @@ public abstract class FCommand extends MCommand<P>
 		
 		if (msg && ret == null)
 		{
-			this.msg("<b>The faction-flag \"<p>%s<b>\" could not be found.", name);
+			this.msg("<b>The guild-flag \"<p>%s<b>\" could not be found.", name);
 		}
 		
 		return ret;
 	}
-	public FFlag argAsFactionFlag(int idx, FFlag def, boolean msg)
+	public FFlag argAsguildFlag(int idx, FFlag def, boolean msg)
 	{
-		return this.strAsFactionFlag(this.argAsString(idx), def, msg);
+		return this.strAsguildFlag(this.argAsString(idx), def, msg);
 	}
-	public FFlag argAsFactionFlag(int idx, FFlag def)
+	public FFlag argAsguildFlag(int idx, FFlag def)
 	{
-		return this.argAsFactionFlag(idx, def, true);
+		return this.argAsguildFlag(idx, def, true);
 	}
-	public FFlag argAsFactionFlag(int idx)
+	public FFlag argAsguildFlag(int idx)
 	{
-		return this.argAsFactionFlag(idx, null);
+		return this.argAsguildFlag(idx, null);
 	}
 	
-	// FACTION PERM ======================
-	public FPerm strAsFactionPerm(String name, FPerm def, boolean msg)
+	// guild PERM ======================
+	public FPerm strAsguildPerm(String name, FPerm def, boolean msg)
 	{
 		FPerm ret = def;
 		
@@ -325,25 +325,25 @@ public abstract class FCommand extends MCommand<P>
 		
 		if (msg && ret == null)
 		{
-			this.msg("<b>The faction-perm \"<p>%s<b>\" could not be found.", name);
+			this.msg("<b>The guild-perm \"<p>%s<b>\" could not be found.", name);
 		}
 		
 		return ret;
 	}
-	public FPerm argAsFactionPerm(int idx, FPerm def, boolean msg)
+	public FPerm argAsguildPerm(int idx, FPerm def, boolean msg)
 	{
-		return this.strAsFactionPerm(this.argAsString(idx), def, msg);
+		return this.strAsguildPerm(this.argAsString(idx), def, msg);
 	}
-	public FPerm argAsFactionPerm(int idx, FPerm def)
+	public FPerm argAsguildPerm(int idx, FPerm def)
 	{
-		return this.argAsFactionPerm(idx, def, true);
+		return this.argAsguildPerm(idx, def, true);
 	}
-	public FPerm argAsFactionPerm(int idx)
+	public FPerm argAsguildPerm(int idx)
 	{
-		return this.argAsFactionPerm(idx, null);
+		return this.argAsguildPerm(idx, null);
 	}
 	
-	// FACTION REL ======================
+	// guild REL ======================
 	public Rel strAsRel(String name, Rel def, boolean msg)
 	{
 		Rel ret = def;
@@ -383,9 +383,9 @@ public abstract class FCommand extends MCommand<P>
 	
 	public boolean canIAdministerYou(FPlayer i, FPlayer you)
 	{
-		if ( ! i.getFaction().equals(you.getFaction()))
+		if ( ! i.getguild().equals(you.getguild()))
 		{
-			i.sendMessage(p.txt.parse("%s <b>is not in the same faction as you.",you.describeTo(i, true)));
+			i.sendMessage(p.txt.parse("%s <b>is not in the same guild as you.",you.describeTo(i, true)));
 			return false;
 		}
 		
@@ -396,7 +396,7 @@ public abstract class FCommand extends MCommand<P>
 		
 		if (you.getRole().equals(Rel.LEADER))
 		{
-			i.sendMessage(p.txt.parse("<b>Only the faction admin can do that."));
+			i.sendMessage(p.txt.parse("<b>Only the guild admin can do that."));
 		}
 		else if (i.getRole().equals(Rel.OFFICER))
 		{
@@ -411,7 +411,7 @@ public abstract class FCommand extends MCommand<P>
 		}
 		else
 		{
-			i.sendMessage(p.txt.parse("<b>You must be a faction moderator to do that."));
+			i.sendMessage(p.txt.parse("<b>You must be a guild moderator to do that."));
 		}
 		
 		return false;
@@ -422,8 +422,8 @@ public abstract class FCommand extends MCommand<P>
 	{
 		if ( ! Econ.shouldBeUsed() || this.fme == null || cost == 0.0 || fme.hasAdminMode()) return true;
 
-		if(Conf.bankEnabled && Conf.bankFactionPaysCosts && fme.hasFaction())
-			return Econ.modifyMoney(myFaction, -cost, toDoThis, forDoingThis);
+		if(Conf.bankEnabled && Conf.bankguildPaysCosts && fme.hasguild())
+			return Econ.modifyMoney(myguild, -cost, toDoThis, forDoingThis);
 		else
 			return Econ.modifyMoney(fme, -cost, toDoThis, forDoingThis);
 	}
@@ -433,8 +433,8 @@ public abstract class FCommand extends MCommand<P>
 	{
 		if ( ! Econ.shouldBeUsed() || this.fme == null || cost == 0.0 || fme.hasAdminMode()) return true;
 
-		if(Conf.bankEnabled && Conf.bankFactionPaysCosts && fme.hasFaction())
-			return Econ.hasAtLeast(myFaction, -cost, toDoThis);
+		if(Conf.bankEnabled && Conf.bankguildPaysCosts && fme.hasguild())
+			return Econ.hasAtLeast(myguild, -cost, toDoThis);
 		else
 			return Econ.hasAtLeast(fme, -cost, toDoThis);
 	}
