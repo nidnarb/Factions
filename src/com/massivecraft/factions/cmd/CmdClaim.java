@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.util.SpiralTask;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.util.SpiralTask;
 
 
 public class CmdClaim extends FCommand
@@ -16,7 +16,7 @@ public class CmdClaim extends FCommand
 		this.aliases.add("claim");
 		
 		//this.requiredArgs.add("");
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		this.optionalArgs.put("radius", "1");
 		
 		this.permission = Permission.CLAIM.node;
@@ -32,7 +32,7 @@ public class CmdClaim extends FCommand
 	public void perform()
 	{
 		// Read and validate input
-		final Faction forFaction = this.argAsFaction(0, myFaction);
+		final guild forguild = this.argAsguild(0, myguild);
 		int radius = this.argAsInt(1, 1);
 
 		if (radius < 1)
@@ -44,7 +44,7 @@ public class CmdClaim extends FCommand
 		if (radius < 2)
 		{
 			// single chunk
-			fme.attemptClaim(forFaction, me.getLocation(), true);
+			fme.attemptClaim(forguild, me.getLocation(), true);
 		}
 		else
 		{
@@ -57,7 +57,7 @@ public class CmdClaim extends FCommand
 				@Override
 				public boolean work()
 				{
-					boolean success = fme.attemptClaim(forFaction, this.currentLocation(), true);
+					boolean success = fme.attemptClaim(forguild, this.currentLocation(), true);
 					if (success)
 						failCount = 0;
 					else if ( ! success && failCount++ >= limit)
