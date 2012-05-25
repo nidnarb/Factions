@@ -1,4 +1,4 @@
-package com.massivecraft.factions.util;
+package com.massivecraft.guilds.util;
 
 import java.util.Arrays;
 import java.util.HashSet;
