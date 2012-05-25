@@ -23,7 +23,7 @@ public class CmdDisband extends FCommand
 		this.aliases.add("disband");
 		
 		//this.requiredArgs.add("");
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		
 		this.permission = Permission.DISBAND.node;
 		this.disableOnLock = true;
@@ -45,7 +45,7 @@ public class CmdDisband extends FCommand
 
 		if (faction.getFlag(FFlag.PERMANENT))
 		{
-			msg("<i>This faction is designated as permanent, so you cannot disband it.");
+			msg("<i>This guild is designated as permanent, so you cannot disband it.");
 			return;
 		}
 
@@ -65,15 +65,15 @@ public class CmdDisband extends FCommand
 			String who = senderIsConsole ? "A server admin" : fme.describeTo(fplayer);
 			if (fplayer.getFaction() == faction)
 			{
-				fplayer.msg("<h>%s<i> disbanded your faction.", who);
+				fplayer.msg("<h>%s<i> disbanded your guild.", who);
 			}
 			else
 			{
-				fplayer.msg("<h>%s<i> disbanded the faction %s.", who, faction.getTag(fplayer));
+				fplayer.msg("<h>%s<i> disbanded the guild %s.", who, faction.getTag(fplayer));
 			}
 		}
 		if (Conf.logFactionDisband)
-			P.p.log("The faction "+faction.getTag()+" ("+faction.getId()+") was disbanded by "+(senderIsConsole ? "console command" : fme.getName())+".");
+			P.p.log("The guild "+faction.getTag()+" ("+faction.getId()+") was disbanded by "+(senderIsConsole ? "console command" : fme.getName())+".");
 
 		if (Econ.shouldBeUsed() && ! senderIsConsole)
 		{
@@ -84,7 +84,7 @@ public class CmdDisband extends FCommand
 			if (amount > 0.0)
 			{
 				String amountString = Econ.moneyString(amount);
-				msg("<i>You have been given the disbanded faction's bank, totaling %s.", amountString);
+				msg("<i>You have been given the disbanded guild's bank, totaling %s.", amountString);
 				P.p.log(fme.getName() + " has been given bank holdings of "+amountString+" from disbanding "+faction.getTag()+".");
 			}
 		}		
