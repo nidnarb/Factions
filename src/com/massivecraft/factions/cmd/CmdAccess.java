@@ -18,7 +18,7 @@ public class CmdAccess extends FCommand
 		super();
 		this.aliases.add("access");
 		
-		this.optionalArgs.put("view|p|f|player|faction", "view");
+		this.optionalArgs.put("view|p|g|player|guild", "view");
 		this.optionalArgs.put("name", "you");
 		
 		this.setHelpShort("view or grant access for the claimed territory you are in");
@@ -47,7 +47,7 @@ public class CmdAccess extends FCommand
 			if ( ! accessAny && ! Permission.ACCESS_VIEW.has(sender, true)) return;
 			if ( ! accessAny && ! territory.doesHostFactionMatch(fme))
 			{
-				msg("<b>This territory isn't controlled by your faction, so you can't view the access list.");
+				msg("<b>This territory isn't controlled by your guild, so you can't view the access list.");
 				return;
 			}
 			showAccessList(territory, locFaction);
@@ -58,14 +58,14 @@ public class CmdAccess extends FCommand
 		if ( ! accessAny && ! FPerm.ACCESS.has(fme, locFaction, true)) return;
 
 		boolean doPlayer = true;
-		if (type.equals("f") || type.equals("faction"))
+		if (type.equals("g") || type.equals("guild"))
 		{
 			doPlayer = false;
 		}
 		else if (!type.equals("p") && !type.equals("player"))
 		{
-			msg("<b>You must specify \"p\" or \"player\" to indicate a player or \"f\" or \"faction\" to indicate a faction.");
-			msg("<b>ex. /f access p SomePlayer  -or-  /f access f SomeFaction");
+			msg("<b>You must specify \"p\" or \"player\" to indicate a player or \"g\" or \"guild\" to indicate a guild.");
+			msg("<b>ex. /g access p SomePlayer  -or-  /g access g Someguild");
 			msg("<b>Alternately, you can use the command with nothing (or \"view\") specified to simply view the access list.");
 			return;
 		}
@@ -85,7 +85,7 @@ public class CmdAccess extends FCommand
 			Faction targetFaction = this.argAsFaction(1, myFaction);
 			if (targetFaction == null) return;
 			added = territory.toggleFaction(targetFaction);
-			target = "Faction \""+targetFaction.getTag()+"\"";
+			target = "Guild \""+targetFaction.getTag()+"\"";
 		}
 
 		msg("<i>%s has been %s<i> the access list for this territory.", target, TextUtil.parseColor(added ? "<lime>added to" : "<rose>removed from"));
@@ -95,15 +95,15 @@ public class CmdAccess extends FCommand
 
 	private void showAccessList(TerritoryAccess territory, Faction locFaction)
 	{
-		msg("<i>Host faction %s has %s<i> in this territory.", locFaction.getTag(), TextUtil.parseColor(territory.isHostFactionAllowed() ? "<lime>normal access" : "<rose>restricted access"));
+		msg("<i>Host guild %s has %s<i> in this territory.", locFaction.getTag(), TextUtil.parseColor(territory.isHostFactionAllowed() ? "<lime>normal access" : "<rose>restricted access"));
 
 		String players = territory.fplayerList();
 		String factions = territory.factionList();
 
 		if (factions.isEmpty())
-			msg("No factions have been explicitly granted access.");
+			msg("No guilds have been explicitly granted access.");
 		else
-			msg("Factions with explicit access: " + factions);
+			msg("guilds with explicit access: " + factions);
 
 		if (players.isEmpty())
 			msg("No players have been explicitly granted access.");
