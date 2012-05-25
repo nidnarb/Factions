@@ -1,12 +1,12 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.FPlayer;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.FPlayer;
 import org.bukkit.entity.Player;
 
 public class LandClaimEvent extends Event implements Cancellable
@@ -15,14 +15,14 @@ public class LandClaimEvent extends Event implements Cancellable
 
 	private boolean cancelled;
 	private FLocation location;
-	private Faction faction;
+	private guild guild;
 	private FPlayer fplayer;
 
-	public LandClaimEvent(FLocation loc, Faction f, FPlayer p)
+	public LandClaimEvent(FLocation loc, guild g, FPlayer p)
 	{
 		cancelled = false;
 		location = loc;
-		faction = f;
+		guild = g;
 		fplayer = p;
 	}
 
@@ -41,19 +41,19 @@ public class LandClaimEvent extends Event implements Cancellable
 		return this.location;
 	}
 
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return faction;
+		return guild;
 	}
 
-	public String getFactionId()
+	public String getguildId()
 	{
-		return faction.getId();
+		return guild.getId();
 	}
 
-	public String getFactionTag()
+	public String getguildTag()
 	{
-		return faction.getTag();
+		return guild.getTag();
 	}
 
 	public FPlayer getFPlayer()
