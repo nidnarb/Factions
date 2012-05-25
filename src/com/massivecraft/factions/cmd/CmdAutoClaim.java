@@ -12,7 +12,7 @@ public class CmdAutoClaim extends FCommand
 		this.aliases.add("autoclaim");
 		
 		//this.requiredArgs.add("");
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		
 		this.permission = Permission.AUTOCLAIM.node;
 		this.disableOnLock = true;
