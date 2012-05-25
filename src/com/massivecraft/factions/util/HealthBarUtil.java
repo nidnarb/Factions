@@ -1,15 +1,15 @@
-package com.massivecraft.factions.util;
+package com.massivecraft.guilds.util;
 
 import java.util.Map.Entry;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 public class HealthBarUtil
 {   
     public static String getHealthbar(double healthQuota, int barLength)
     {
-    	// Ensure between 0 and 1;
+        // Ensure between 0 and 1;
     	healthQuota = fixQuota(healthQuota);
     	
     	// What color is the health bar?
