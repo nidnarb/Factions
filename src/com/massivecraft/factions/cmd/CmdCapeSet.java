@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.net.URL;
 
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.util.RelationUtil;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.util.RelationUtil;
 
 public class CmdCapeSet extends CapeCommand
 {
@@ -23,10 +23,10 @@ public class CmdCapeSet extends CapeCommand
 		
 		if (isUrlValid(newCape))
 		{
-			capeFaction.setCape(newCape);
-			SpoutFeatures.updateCape(capeFaction, null);
-			msg("<h>%s <i>set the cape of <h>%s<i> to \"<h>%s<i>\".", RelationUtil.describeThatToMe(fme, fme, true), capeFaction.describeTo(fme), newCape);
-			capeFaction.msg("<h>%s <i>set the cape of <h>%s<i> to \"<h>%s<i>\".", RelationUtil.describeThatToMe(fme, capeFaction, true), capeFaction.describeTo(capeFaction), newCape);
+			capeguild.setCape(newCape);
+			SpoutFeatures.updateCape(capeguild, null);
+			msg("<h>%s <i>set the cape of <h>%s<i> to \"<h>%s<i>\".", RelationUtil.describeThatToMe(fme, fme, true), capeguild.describeTo(fme), newCape);
+			capeguild.msg("<h>%s <i>set the cape of <h>%s<i> to \"<h>%s<i>\".", RelationUtil.describeThatToMe(fme, capeguild, true), capeguild.describeTo(capeguild), newCape);
 		}
 		else
 		{
