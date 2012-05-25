@@ -1,10 +1,10 @@
-package com.massivecraft.factions.adapters;
+package com.massivecraft.guilds.adapters;
 
 import java.lang.reflect.Type;
 import java.util.logging.Level;
 
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.util.LazyLocation;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.util.LazyLocation;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
