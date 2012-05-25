@@ -1,22 +1,22 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.guild;
 
 
-public class FactionRelationEvent extends Event
+public class guildRelationEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 
-	private Faction fsender;
-	private Faction ftarget;
+	private guild fsender;
+	private guild ftarget;
 	private Rel foldrel;
 	private Rel frel;
 
-	public FactionRelationEvent(Faction sender, Faction target, Rel oldrel, Rel rel)
+	public guildRelationEvent(guild sender, guild target, Rel oldrel, Rel rel)
 	{
 		fsender = sender;
 		ftarget = target;
@@ -44,12 +44,12 @@ public class FactionRelationEvent extends Event
 		return frel;
 	}
 
-	public Faction getFaction()
+	public guild getguild()
 	{
 		return fsender;
 	}
 
-	public Faction getTargetFaction()
+	public guild getTargetguild()
 	{
 		return ftarget;
 	}
