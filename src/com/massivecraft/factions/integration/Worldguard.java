@@ -1,6 +1,6 @@
-package com.massivecraft.factions.integration;
+package com.massivecraft.guilds.integration;
 
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.P;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +101,7 @@ public class Worldguard
 		BlockVector maxChunk = new BlockVector(maxChunkX, worldHeight, maxChunkZ);
 
 		RegionManager regionManager = wg.getRegionManager(world);
-		ProtectedCuboidRegion region = new ProtectedCuboidRegion("wgfactionoverlapcheck", minChunk, maxChunk);
+		ProtectedCuboidRegion region = new ProtectedCuboidRegion("wgguildoverlapcheck", minChunk, maxChunk);
 		Map<String, ProtectedRegion> allregions = regionManager.getRegions(); 
 		List<ProtectedRegion> allregionslist = new ArrayList<ProtectedRegion>(allregions.values());
 		List<ProtectedRegion> overlaps;
