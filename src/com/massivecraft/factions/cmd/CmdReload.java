@@ -1,11 +1,11 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdReload extends FCommand
 {
@@ -47,8 +47,8 @@ public class CmdReload extends FCommand
 		}
 		else if (file.startsWith("f"))
 		{
-			Factions.i.loadFromDisc();
-			fileName = "factions.json";
+			guilds.i.loadFromDisc();
+			fileName = "guilds.json";
 		}
 		else if (file.startsWith("p"))
 		{
@@ -60,13 +60,13 @@ public class CmdReload extends FCommand
 			fileName = "all";
 			Conf.load();
 			FPlayers.i.loadFromDisc();
-			Factions.i.loadFromDisc();
+			guilds.i.loadFromDisc();
 			Board.load();
 		}
 		else
 		{
 			P.p.log("RELOAD CANCELLED - SPECIFIED FILE INVALID");
-			msg("<b>Invalid file specified. <i>Valid files: all, conf, board, factions, players");
+			msg("<b>Invalid file specified. <i>Valid files: all, conf, board, guilds, players");
 			return;
 		}
 		
