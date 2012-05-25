@@ -1,6 +1,6 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdLeave extends FCommand {
 	
