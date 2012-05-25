@@ -1,24 +1,24 @@
-package com.massivecraft.factions.struct;
+package com.massivecraft.guilds.struct;
 
-import com.massivecraft.factions.Conf;
+import com.massivecraft.guilds.Conf;
 
 /**
- * Flags that describe the nature of a faction and it's territory.
- * Can monsters spawn there? May fire spread etc? Is the faction permanent?
+ * Flags that describe the nature of a guild and it's territory.
+ * Can monsters spawn there? May fire spread etc? Is the guild permanent?
  * These flags have nothing to do with player-permission.
  * 
  * The flags are either true or false.
  */
 public enum FFlag
 {
-	// Faction flags
-	PERMANENT("permanent", "<i>A permanent faction will never be deleted.", false),
-	PEACEFUL("peaceful", "<i>Allways in truce with other factions.", false),
-	INFPOWER("infpower", "<i>This flag gives the faction infinite power.", false),
-	// This faction has infinite power: TODO: Add faction has enough method. Replace the permanentpower level 
+	// guild flags
+	PERMANENT("permanent", "<i>A permanent guild will never be deleted.", false),
+	PEACEFUL("peaceful", "<i>Allways in truce with other guilds.", false),
+	INFPOWER("infpower", "<i>This flag gives the guild infinite power.", false),
+	// This guild has infinite power: TODO: Add guild has enough method. Replace the permanentpower level 
 	
-	// (Faction) Territory flags
-	// If a faction later could have many different territories this would probably be in another enum
+	// (guild) Territory flags
+	// If a guild later could have many different territories this would probably be in another enum
 	POWERLOSS("powerloss", "<i>Is power lost on death in this territory?", true),
 	PVP("pvp", "<i>Can you PVP in territory?", true),
 	FRIENDLYFIRE("friendlyfire", "<i>Can friends hurt eachother here?", false),
@@ -51,11 +51,11 @@ public enum FFlag
 	}
 	
 	/**
-	 * The state for newly created factions.
+	 * The state for newly created guilds.
 	 */
 	public boolean getDefault()
 	{
-		Boolean ret = Conf.factionFlagDefaults.get(this);
+		Boolean ret = Conf.guildFlagDefaults.get(this);
 		if (ret == null) return this.defaultDefaultValue;
 		return ret; 
 	}
