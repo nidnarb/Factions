@@ -1,17 +1,17 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import org.bukkit.Bukkit;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.event.LandUnclaimEvent;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.event.LandUnclaimEvent;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdUnclaim extends FCommand
 {
@@ -36,22 +36,22 @@ public class CmdUnclaim extends FCommand
 	public void perform()
 	{
 		FLocation flocation = new FLocation(fme);
-		Faction otherFaction = Board.getFactionAt(flocation);
+		guild otherguild = Board.getguildAt(flocation);
 
-		if ( ! FPerm.TERRITORY.has(sender, otherFaction, true)) return;
+		if ( ! FPerm.TERRITORY.has(sender, otherguild, true)) return;
 
-		LandUnclaimEvent unclaimEvent = new LandUnclaimEvent(flocation, otherFaction, fme);
+		LandUnclaimEvent unclaimEvent = new LandUnclaimEvent(flocation, otherguild, fme);
 		Bukkit.getServer().getPluginManager().callEvent(unclaimEvent);
 		if(unclaimEvent.isCancelled()) return;
 	
 		//String moneyBack = "<i>";
 		if (Econ.shouldBeUsed())
 		{
-			double refund = Econ.calculateClaimRefund(myFaction.getLandRounded());
+			double refund = Econ.calculateClaimRefund(myguild.getLandRounded());
 			
-			if(Conf.bankEnabled && Conf.bankFactionPaysLandCosts)
+			if(Conf.bankEnabled && Conf.bankguildPaysLandCosts)
 			{
-				if ( ! Econ.modifyMoney(myFaction, refund, "to unclaim this land", "for unclaiming this land")) return;
+				if ( ! Econ.modifyMoney(myguild, refund, "to unclaim this land", "for unclaiming this land")) return;
 			}
 			else
 			{
@@ -61,10 +61,10 @@ public class CmdUnclaim extends FCommand
 
 		Board.removeAt(flocation);
 		SpoutFeatures.updateTerritoryDisplayLoc(flocation);
-		myFaction.msg("%s<i> unclaimed some land.", fme.describeTo(myFaction, true));
+		myguild.msg("%s<i> unclaimed some land.", fme.describeTo(myguild, true));
 
 		if (Conf.logLandUnclaims)
-			P.p.log(fme.getName()+" unclaimed land at ("+flocation.getCoordString()+") from the faction: "+otherFaction.getTag());
+			P.p.log(fme.getName()+" unclaimed land at ("+flocation.getCoordString()+") from the guild: "+otherguild.getTag());
 	}
 	
 }
