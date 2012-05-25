@@ -1,4 +1,4 @@
-package com.massivecraft.factions.util;
+package com.massivecraft.guilds.util;
 
 import java.util.logging.Level;
 
@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.massivecraft.factions.FLocation;
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.FLocation;
+import com.massivecraft.guilds.P;
 
 
 /*
