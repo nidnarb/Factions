@@ -1,8 +1,8 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.integration.SpoutFeatures;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.util.RelationUtil;
+import com.massivecraft.guilds.integration.SpoutFeatures;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.util.RelationUtil;
 
 public class CmdCapeRemove extends CapeCommand
 {
@@ -22,14 +22,14 @@ public class CmdCapeRemove extends CapeCommand
 	{
 		if (currentCape == null)
 		{
-			msg("<h>%s <i>has no cape set.", capeFaction.describeTo(fme, true));
+			msg("<h>%s <i>has no cape set.", capeguild.describeTo(fme, true));
 		}
 		else
 		{
-			capeFaction.setCape(null);
-			SpoutFeatures.updateCape(capeFaction, null);
-			msg("<h>%s <i>removed the cape from <h>%s<i>.", RelationUtil.describeThatToMe(fme, fme, true), capeFaction.describeTo(fme));
-			capeFaction.msg("<h>%s <i>removed the cape from <h>%s<i>.", RelationUtil.describeThatToMe(fme, capeFaction, true), capeFaction.describeTo(capeFaction));
+			capeguild.setCape(null);
+			SpoutFeatures.updateCape(capeguild, null);
+			msg("<h>%s <i>removed the cape from <h>%s<i>.", RelationUtil.describeThatToMe(fme, fme, true), capeguild.describeTo(fme));
+			capeguild.msg("<h>%s <i>removed the cape from <h>%s<i>.", RelationUtil.describeThatToMe(fme, capeguild, true), capeguild.describeTo(capeguild));
 		}
 	}
 }
