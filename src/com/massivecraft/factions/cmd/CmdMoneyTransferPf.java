@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.iface.EconomyParticipator;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.iface.EconomyParticipator;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.struct.Permission;
 
 import org.bukkit.ChatColor;
 
@@ -17,7 +17,7 @@ public class CmdMoneyTransferPf extends FCommand
 		
 		this.requiredArgs.add("amount");
 		this.requiredArgs.add("player");
-		this.requiredArgs.add("faction");
+		this.requiredArgs.add("guild");
 		
 		//this.optionalArgs.put("", "");
 		
@@ -36,12 +36,12 @@ public class CmdMoneyTransferPf extends FCommand
 		double amount = this.argAsDouble(0, 0d);
 		EconomyParticipator from = this.argAsBestFPlayerMatch(1);
 		if (from == null) return;
-		EconomyParticipator to = this.argAsFaction(2);
+		EconomyParticipator to = this.argAsguild(2);
 		if (to == null) return;
 		
 		boolean success = Econ.transferMoney(fme, from, to, amount);
 
 		if (success && Conf.logMoneyTransactions)
-			P.p.log(ChatColor.stripColor(P.p.txt.parse("%s transferred %s from the player \"%s\" to the faction \"%s\"", fme.getName(), Econ.moneyString(amount), from.describeTo(null), to.describeTo(null))));
+			P.p.log(ChatColor.stripColor(P.p.txt.parse("%s transferred %s from the player \"%s\" to the guild \"%s\"", fme.getName(), Econ.moneyString(amount), from.describeTo(null), to.describeTo(null))));
 	}
 }
