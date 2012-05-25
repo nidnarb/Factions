@@ -1,28 +1,28 @@
-package com.massivecraft.factions.event;
+package com.massivecraft.guilds.event;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
 
 public class FPlayerJoinEvent extends Event implements Cancellable
 {
 	private static final HandlerList handlers = new HandlerList();
 
 	FPlayer fplayer;
-	Faction faction;
+	guild guild;
 	PlayerJoinReason reason;
 	boolean cancelled = false;
 	public enum PlayerJoinReason
 	{
 		CREATE, LEADER, COMMAND
 	}
-	public FPlayerJoinEvent(FPlayer fp, Faction f, PlayerJoinReason r)
+	public FPlayerJoinEvent(FPlayer fp, guild f, PlayerJoinReason r)
 	{ 
 		fplayer = fp;
-		faction = f;
+		guild = f;
 		reason = r;
 	}
 
@@ -30,9 +30,9 @@ public class FPlayerJoinEvent extends Event implements Cancellable
 	{
 		return fplayer;
 	}
-	public Faction getFaction()
+	public guild getguild()
 	{
-		return faction;
+		return guild;
 	}
 	public PlayerJoinReason getReason()
 	{
