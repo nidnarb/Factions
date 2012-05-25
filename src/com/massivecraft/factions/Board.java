@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -14,11 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import com.google.gson.reflect.TypeToken;
-import com.massivecraft.factions.integration.LWCFeatures;
-import com.massivecraft.factions.iface.RelationParticipator;
-import com.massivecraft.factions.struct.TerritoryAccess;
-import com.massivecraft.factions.util.AsciiCompass;
-import com.massivecraft.factions.zcore.util.DiscUtil;
+import com.massivecraft.guilds.integration.LWCFeatures;
+import com.massivecraft.guilds.iface.RelationParticipator;
+import com.massivecraft.guilds.struct.TerritoryAccess;
+import com.massivecraft.guilds.util.AsciiCompass;
+import com.massivecraft.guilds.zcore.util.DiscUtil;
 
 
 public class Board
@@ -33,7 +33,7 @@ public class Board
 	{
 		if ( ! flocationIds.containsKey(flocation)) return "0";
 		
-		return flocationIds.get(flocation).getHostFactionID();
+		return flocationIds.get(flocation).getHostguildID();
 	}
 
 	public static TerritoryAccess getTerritoryAccessAt(FLocation flocation)
@@ -43,17 +43,17 @@ public class Board
 		return flocationIds.get(flocation);
 	}
 
-	public static Faction getFactionAt(FLocation flocation)
+	public static guild getguildAt(FLocation flocation)
 	{
-		return Factions.i.get(getIdAt(flocation));
+		return guilds.i.get(getIdAt(flocation));
 	}
-	public static Faction getFactionAt(Location location)
+	public static guild getguildAt(Location location)
 	{
-		return getFactionAt(new FLocation(location));
+		return getguildAt(new FLocation(location));
 	}
-	public static Faction getFactionAt(Block block)
+	public static guild getguildAt(Block block)
 	{
-		return getFactionAt(new FLocation(block));
+		return getguildAt(new FLocation(block));
 	}
 	
 	public static void setIdAt(String id, FLocation flocation)
@@ -64,9 +64,9 @@ public class Board
 		flocationIds.put(flocation, new TerritoryAccess(id));
 	}
 	
-	public static void setFactionAt(Faction faction, FLocation flocation)
+	public static void setguildAt(guild guild, FLocation flocation)
 	{
-		setIdAt(faction.getId(), flocation);
+		setIdAt(guild.getId(), flocation);
 	}
 	
 	public static void removeAt(FLocation flocation)
@@ -77,13 +77,13 @@ public class Board
 		flocationIds.remove(flocation);
 	}
 	
-	public static void unclaimAll(String factionId)
+	public static void unclaimAll(String guildId)
 	{
 		Iterator<Entry<FLocation, TerritoryAccess>> iter = flocationIds.entrySet().iterator();
 		while (iter.hasNext())
 		{
 			Entry<FLocation, TerritoryAccess> entry = iter.next();
-			if (entry.getValue().getHostFactionID().equals(factionId))
+			if (entry.getValue().getHostguildID().equals(guildId))
 			{
 					if(Conf.onUnclaimResetLwcLocks && LWCFeatures.getEnabled())
 						LWCFeatures.clearAllChests(entry.getKey());
@@ -93,26 +93,26 @@ public class Board
 		}
 	}
 
-	// Is this coord NOT completely surrounded by coords claimed by the same faction?
-	// Simpler: Is there any nearby coord with a faction other than the faction here?
+	// Is this coord NOT completely surrounded by coords claimed by the same guild?
+	// Simpler: Is there any nearby coord with a guild other than the guild here?
 	public static boolean isBorderLocation(FLocation flocation)
 	{
-		Faction faction = getFactionAt(flocation);
+		guild guild = getguildAt(flocation);
 		FLocation a = flocation.getRelative(1, 0);
 		FLocation b = flocation.getRelative(-1, 0);
 		FLocation c = flocation.getRelative(0, 1);
 		FLocation d = flocation.getRelative(0, -1);
-		return faction != getFactionAt(a) || faction != getFactionAt(b) || faction != getFactionAt(c) || faction != getFactionAt(d);
+		return guild != getguildAt(a) || guild != getguildAt(b) || guild != getguildAt(c) || guild != getguildAt(d);
 	}
 
-	// Is this coord connected to any coord claimed by the specified faction?
-	public static boolean isConnectedLocation(FLocation flocation, Faction faction)
+	// Is this coord connected to any coord claimed by the specified guild?
+	public static boolean isConnectedLocation(FLocation flocation, guild guild)
 	{
 		FLocation a = flocation.getRelative(1, 0);
 		FLocation b = flocation.getRelative(-1, 0);
 		FLocation c = flocation.getRelative(0, 1);
 		FLocation d = flocation.getRelative(0, -1);
-		return faction == getFactionAt(a) || faction == getFactionAt(b) || faction == getFactionAt(c) || faction == getFactionAt(d);
+		return guild == getguildAt(a) || guild == getguildAt(b) || guild == getguildAt(c) || guild == getguildAt(d);
 	}
 	
 	
@@ -125,12 +125,12 @@ public class Board
 		Iterator<Entry<FLocation, TerritoryAccess>> iter = flocationIds.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<FLocation, TerritoryAccess> entry = iter.next();
-			if ( ! Factions.i.exists(entry.getValue().getHostFactionID()))
+			if ( ! guilds.i.exists(entry.getValue().getHostguildID()))
 			{
 				if(Conf.onUnclaimResetLwcLocks && LWCFeatures.getEnabled())
 					LWCFeatures.clearAllChests(entry.getKey());
 
-				P.p.log("Board cleaner removed "+entry.getValue().getHostFactionID()+" from "+entry.getKey());
+				P.p.log("Board cleaner removed "+entry.getValue().getHostguildID()+" from "+entry.getKey());
 				iter.remove();
 			}
 		}
@@ -140,12 +140,12 @@ public class Board
 	// Coord count
 	//----------------------------------------------//
 	
-	public static int getFactionCoordCount(String factionId)
+	public static int getguildCoordCount(String guildId)
 	{
 		int ret = 0;
-		for (TerritoryAccess thatFactionId : flocationIds.values())
+		for (TerritoryAccess thatguildId : flocationIds.values())
 		{
-			if(thatFactionId.getHostFactionID().equals(factionId))
+			if(thatguildId.getHostguildID().equals(guildId))
 			{
 				ret += 1;
 			}
@@ -153,19 +153,19 @@ public class Board
 		return ret;
 	}
 	
-	public static int getFactionCoordCount(Faction faction)
+	public static int getguildCoordCount(guild guild)
 	{
-		return getFactionCoordCount(faction.getId());
+		return getguildCoordCount(guild.getId());
 	}
 	
-	public static int getFactionCoordCountInWorld(Faction faction, String worldName)
+	public static int getguildCoordCountInWorld(guild guild, String worldName)
 	{
-		String factionId = faction.getId();
+		String guildId = guild.getId();
 		int ret = 0;
 		Iterator<Entry<FLocation, TerritoryAccess>> iter = flocationIds.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<FLocation, TerritoryAccess> entry = iter.next();
-			if (entry.getValue().getHostFactionID().equals(factionId) && entry.getKey().getWorldName().equals(worldName))
+			if (entry.getValue().getHostguildID().equals(guildId) && entry.getKey().getWorldName().equals(worldName))
 			{
 				ret += 1;
 			}
@@ -178,15 +178,15 @@ public class Board
 	//----------------------------------------------//
 	
 	/**
-	 * The map is relative to a coord and a faction
+	 * The map is relative to a coord and a guild
 	 * north is in the direction of decreasing x
 	 * east is in the direction of decreasing z
 	 */
 	public static ArrayList<String> getMap(RelationParticipator observer, FLocation flocation, double inDegrees)
 	{
 		ArrayList<String> ret = new ArrayList<String>();
-		Faction factionLoc = getFactionAt(flocation);
-		ret.add(P.p.txt.titleize("("+flocation.getCoordString()+") "+factionLoc.getTag(observer)));
+		guild guildLoc = getguildAt(flocation);
+		ret.add(P.p.txt.titleize("("+flocation.getCoordString()+") "+guildLoc.getTag(observer)));
 		
 		int halfWidth = Conf.mapWidth / 2;
 		int halfHeight = Conf.mapHeight / 2;
@@ -198,7 +198,7 @@ public class Board
 		height--;
 		
 		
-		Map<Faction, Character> fList = new HashMap<Faction, Character>();
+		Map<guild, Character> fList = new HashMap<guild, Character>();
 		int chrIdx = 0;
 		
 		// For each row
@@ -215,17 +215,17 @@ public class Board
 				}
 			
 				FLocation flocationHere = topLeft.getRelative(dx, dz);
-				Faction factionHere = getFactionAt(flocationHere);
-				if (factionHere.isNone())
+				guild guildHere = getguildAt(flocationHere);
+				if (guildHere.isNone())
 				{
 					row += ChatColor.GRAY+"-";
 				}
 				else
 				{
-					if (!fList.containsKey(factionHere))
-						fList.put(factionHere, Conf.mapKeyChrs[chrIdx++]);
-					char fchar = fList.get(factionHere);
-					row += factionHere.getColorTo(observer) + "" + fchar;
+					if (!fList.containsKey(guildHere))
+						fList.put(guildHere, Conf.mapKeyChrs[chrIdx++]);
+					char fchar = fList.get(guildHere);
+					row += guildHere.getColorTo(observer) + "" + fchar;
 				}
 			}
 			ret.add(row);
@@ -240,9 +240,9 @@ public class Board
 		ret.set(3, asciiCompass.get(2)+ret.get(3).substring(3*3));
 			
 		String fRow = "";
-		for(Faction keyfaction : fList.keySet())
+		for(guild keyguild : fList.keySet())
 		{
-			fRow += ""+keyfaction.getColorTo(observer) + fList.get(keyfaction) + ": " + keyfaction.getTag() + " ";
+			fRow += ""+keyguild.getColorTo(observer) + fList.get(keyguild) + ": " + keyguild.getTag() + " ";
 		}
 		fRow = fRow.trim();
 		ret.add(fRow);
@@ -303,7 +303,7 @@ public class Board
 	
 	public static boolean save()
 	{
-		//Factions.log("Saving board to disk");
+		//guilds.log("Saving board to disk");
 		
 		try
 		{
