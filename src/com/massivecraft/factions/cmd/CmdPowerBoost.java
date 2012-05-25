@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdPowerBoost extends FCommand
 {
@@ -12,7 +12,7 @@ public class CmdPowerBoost extends FCommand
 		super();
 		this.aliases.add("powerboost");
 		
-		this.requiredArgs.add("p|f|player|faction");
+		this.requiredArgs.add("p|g|player|guild");
 		this.requiredArgs.add("name");
 		this.requiredArgs.add("#");
 		
@@ -30,14 +30,14 @@ public class CmdPowerBoost extends FCommand
 	{
 		String type = this.argAsString(0).toLowerCase();
 		boolean doPlayer = true;
-		if (type.equals("f") || type.equals("faction"))
+		if (type.equals("g") || type.equals("guild"))
 		{
 			doPlayer = false;
 		}
 		else if (!type.equals("p") && !type.equals("player"))
 		{
-			msg("<b>You must specify \"p\" or \"player\" to target a player or \"f\" or \"faction\" to target a faction.");
-			msg("<b>ex. /f powerboost p SomePlayer 0.5  -or-  /f powerboost f SomeFaction -5");
+			msg("<b>You must specify \"p\" or \"player\" to target a player or \"g\" or \"guild\" to target a guild.");
+			msg("<b>ex. /f powerboost p SomePlayer 0.5  -or-  /f powerboost f Someguild -5");
 			return;
 		}
 		
@@ -59,10 +59,10 @@ public class CmdPowerBoost extends FCommand
 		}
 		else
 		{
-			Faction targetFaction = this.argAsFaction(1);
-			if (targetFaction == null) return;
-			targetFaction.setPowerBoost(targetPower);
-			target = "Faction \""+targetFaction.getTag()+"\"";
+			guild targetguild = this.argAsguild(1);
+			if (targetguild == null) return;
+			targetguild.setPowerBoost(targetPower);
+			target = "guild \""+targetguild.getTag()+"\"";
 		}
 
 		msg("<i>"+target+" now has a power bonus/penalty of "+targetPower+" to min and max power levels.");
