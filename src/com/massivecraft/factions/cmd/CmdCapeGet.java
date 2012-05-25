@@ -1,6 +1,6 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdCapeGet extends CapeCommand
 {
@@ -15,11 +15,11 @@ public class CmdCapeGet extends CapeCommand
 	{
 		if (currentCape == null)
 		{
-			msg("<h>%s <i>has no cape set.", capeFaction.describeTo(fme, true));
+			msg("<h>%s <i>has no cape set.", capeguild.describeTo(fme, true));
 		}
 		else
 		{
-			msg("<i>The cape of <h>%s <i>is \"<h>%s<i>\".", capeFaction.describeTo(fme, true), currentCape);
+			msg("<i>The cape of <h>%s <i>is \"<h>%s<i>\".", capeguild.describeTo(fme, true), currentCape);
 		}
 	}
 }
