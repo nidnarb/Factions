@@ -1,4 +1,4 @@
-package com.massivecraft.factions.adapters;
+package com.massivecraft.guilds.adapters;
 
 import java.lang.reflect.Type;
 
@@ -6,7 +6,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.massivecraft.factions.struct.FPerm;
+import com.massivecraft.guilds.struct.FPerm;
 
 public class FPermTypeAdapter implements JsonDeserializer<FPerm>
 {
