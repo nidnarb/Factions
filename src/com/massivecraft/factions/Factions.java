@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -10,27 +10,27 @@ import java.util.logging.Level;
 import org.bukkit.ChatColor;
 
 import com.google.gson.reflect.TypeToken;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.util.MiscUtil;
-import com.massivecraft.factions.zcore.persist.EntityCollection;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.util.MiscUtil;
+import com.massivecraft.guilds.zcore.persist.EntityCollection;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
-public class Factions extends EntityCollection<Faction>
+public class guilds extends EntityCollection<guild>
 {
-	public static Factions i = new Factions();
+	public static guilds i = new guilds();
 	
 	P p = P.p;
 	
-	private Factions()
+	private guilds()
 	{
 		super
 		(
-			Faction.class,
-			new CopyOnWriteArrayList<Faction>(),
-			new ConcurrentHashMap<String, Faction>(),
-			new File(P.p.getDataFolder(), "factions.json"),
+			guild.class,
+			new CopyOnWriteArrayList<guild>(),
+			new ConcurrentHashMap<String, guild>(),
+			new File(P.p.getDataFolder(), "guilds.json"),
 			P.p.gson
 		);
 	}
@@ -38,7 +38,7 @@ public class Factions extends EntityCollection<Faction>
 	@Override
 	public Type getMapType()
 	{
-		return new TypeToken<Map<String, Faction>>(){}.getType();
+		return new TypeToken<Map<String, guild>>(){}.getType();
 	}
 	
 	@Override
@@ -47,37 +47,37 @@ public class Factions extends EntityCollection<Faction>
 		if ( ! super.loadFromDisc()) return false;
 		
 		//----------------------------------------------//
-		// Create Default Special Factions
+		// Create Default Special guilds
 		//----------------------------------------------//
 		if ( ! this.exists("0"))
 		{
-			Faction faction = this.create("0");
-			faction.setTag(ChatColor.DARK_GREEN+"Wilderness");
-			faction.setDescription("");
-			this.setFlagsForWilderness(faction);
+			guild guild = this.create("0");
+			guild.setTag(ChatColor.DARK_GREEN+"Wilderness");
+			guild.setDescription("");
+			this.setFlagsForWilderness(guild);
 		}
 		if ( ! this.exists("-1"))
 		{
-			Faction faction = this.create("-1");
-			faction.setTag("SafeZone");
-			faction.setDescription("Free from PVP and monsters");
+			guild guild = this.create("-1");
+			guild.setTag("SafeZone");
+			guild.setDescription("Free from PVP and monsters");
 			
-			this.setFlagsForSafeZone(faction);
+			this.setFlagsForSafeZone(guild);
 		}
 		if ( ! this.exists("-2"))
 		{
-			Faction faction = this.create("-2");
-			faction.setTag("WarZone");
-			faction.setDescription("Not the safest place to be");
-			this.setFlagsForWarZone(faction);
+			guild guild = this.create("-2");
+			guild.setTag("WarZone");
+			guild.setDescription("Not the safest place to be");
+			this.setFlagsForWarZone(guild);
 		}
 		
 		//----------------------------------------------//
 		// Fix From Old Formats
 		//----------------------------------------------//
-		Faction wild = this.get("0");
-		Faction safeZone = this.get("-1");
-		Faction warZone = this.get("-2");
+		guild wild = this.get("0");
+		guild safeZone = this.get("-1");
+		guild warZone = this.get("-2");
 		
 		// Remove troublesome " " from old pre-1.6.0 names
 		if (safeZone != null && safeZone.getTag().contains(" "))
@@ -93,10 +93,10 @@ public class Factions extends EntityCollection<Faction>
 		if (warZone != null && ! warZone.getFlag(FFlag.PERMANENT))
 			setFlagsForWarZone(warZone);
 
-		// populate all faction player lists
-		for (Faction faction : i.get())
+		// populate all guild player lists
+		for (guild guild : i.get())
 		{
-			faction.refreshFPlayers();
+			guild.refreshFPlayers();
 		}
 
 		return true;
@@ -105,71 +105,71 @@ public class Factions extends EntityCollection<Faction>
 	//----------------------------------------------//
 	// Flag Setters
 	//----------------------------------------------//
-	public void setFlagsForWilderness(Faction faction)
+	public void setFlagsForWilderness(guild guild)
 	{
-		faction.setOpen(false);
+		guild.setOpen(false);
 		
-		faction.setFlag(FFlag.PERMANENT, true);
-		faction.setFlag(FFlag.PEACEFUL, false);
-		faction.setFlag(FFlag.INFPOWER, true);
-		faction.setFlag(FFlag.POWERLOSS, true);
-		faction.setFlag(FFlag.PVP, true);
-		faction.setFlag(FFlag.FRIENDLYFIRE, false);
-		faction.setFlag(FFlag.MONSTERS, true);
-		faction.setFlag(FFlag.EXPLOSIONS, true);
-		faction.setFlag(FFlag.FIRESPREAD, true);
-		//faction.setFlag(FFlag.LIGHTNING, true);
-		faction.setFlag(FFlag.ENDERGRIEF, true);
+		guild.setFlag(FFlag.PERMANENT, true);
+		guild.setFlag(FFlag.PEACEFUL, false);
+		guild.setFlag(FFlag.INFPOWER, true);
+		guild.setFlag(FFlag.POWERLOSS, true);
+		guild.setFlag(FFlag.PVP, true);
+		guild.setFlag(FFlag.FRIENDLYFIRE, false);
+		guild.setFlag(FFlag.MONSTERS, true);
+		guild.setFlag(FFlag.EXPLOSIONS, true);
+		guild.setFlag(FFlag.FIRESPREAD, true);
+		//guild.setFlag(FFlag.LIGHTNING, true);
+		guild.setFlag(FFlag.ENDERGRIEF, true);
 		
-		faction.setPermittedRelations(FPerm.BUILD, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.BUILD, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 	}
 	
-	public void setFlagsForSafeZone(Faction faction)
+	public void setFlagsForSafeZone(guild guild)
 	{
-		faction.setOpen(false);
+		guild.setOpen(false);
 		
-		faction.setFlag(FFlag.PERMANENT, true);
-		faction.setFlag(FFlag.PEACEFUL, true);
-		faction.setFlag(FFlag.INFPOWER, true);
-		faction.setFlag(FFlag.POWERLOSS, false);
-		faction.setFlag(FFlag.PVP, false);
-		faction.setFlag(FFlag.FRIENDLYFIRE, false);
-		faction.setFlag(FFlag.MONSTERS, false);
-		faction.setFlag(FFlag.EXPLOSIONS, false);
-		faction.setFlag(FFlag.FIRESPREAD, false);
-		//faction.setFlag(FFlag.LIGHTNING, false);
-		faction.setFlag(FFlag.ENDERGRIEF, false);
+		guild.setFlag(FFlag.PERMANENT, true);
+		guild.setFlag(FFlag.PEACEFUL, true);
+		guild.setFlag(FFlag.INFPOWER, true);
+		guild.setFlag(FFlag.POWERLOSS, false);
+		guild.setFlag(FFlag.PVP, false);
+		guild.setFlag(FFlag.FRIENDLYFIRE, false);
+		guild.setFlag(FFlag.MONSTERS, false);
+		guild.setFlag(FFlag.EXPLOSIONS, false);
+		guild.setFlag(FFlag.FIRESPREAD, false);
+		//guild.setFlag(FFlag.LIGHTNING, false);
+		guild.setFlag(FFlag.ENDERGRIEF, false);
 		
-		faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 	}
 	
-	public void setFlagsForWarZone(Faction faction)
+	public void setFlagsForWarZone(guild guild)
 	{
-		faction.setOpen(false);
+		guild.setOpen(false);
 		
-		faction.setFlag(FFlag.PERMANENT, true);
-		faction.setFlag(FFlag.PEACEFUL, true);
-		faction.setFlag(FFlag.INFPOWER, true);
-		faction.setFlag(FFlag.POWERLOSS, true);
-		faction.setFlag(FFlag.PVP, true);
-		faction.setFlag(FFlag.FRIENDLYFIRE, true);
-		faction.setFlag(FFlag.MONSTERS, true);
-		faction.setFlag(FFlag.EXPLOSIONS, true);
-		faction.setFlag(FFlag.FIRESPREAD, true);
-		//faction.setFlag(FFlag.LIGHTNING, true);
-		faction.setFlag(FFlag.ENDERGRIEF, true);
+		guild.setFlag(FFlag.PERMANENT, true);
+		guild.setFlag(FFlag.PEACEFUL, true);
+		guild.setFlag(FFlag.INFPOWER, true);
+		guild.setFlag(FFlag.POWERLOSS, true);
+		guild.setFlag(FFlag.PVP, true);
+		guild.setFlag(FFlag.FRIENDLYFIRE, true);
+		guild.setFlag(FFlag.MONSTERS, true);
+		guild.setFlag(FFlag.EXPLOSIONS, true);
+		guild.setFlag(FFlag.FIRESPREAD, true);
+		//guild.setFlag(FFlag.LIGHTNING, true);
+		guild.setFlag(FFlag.ENDERGRIEF, true);
 		
-		faction.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
-		faction.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.DOOR, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.CONTAINER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.BUTTON, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
+		guild.setPermittedRelations(FPerm.LEVER, Rel.LEADER, Rel.OFFICER, Rel.MEMBER, Rel.ALLY, Rel.TRUCE, Rel.NEUTRAL, Rel.ENEMY);
 	}
 	
 	
@@ -178,11 +178,11 @@ public class Factions extends EntityCollection<Faction>
 	//----------------------------------------------//
 	
 	@Override
-	public Faction get(String id)
+	public guild get(String id)
 	{
 		if ( ! this.exists(id))
 		{
-			p.log(Level.WARNING, "Non existing factionId "+id+" requested! Issuing cleaning!");
+			p.log(Level.WARNING, "Non existing guildId "+id+" requested! Issuing cleaning!");
 			Board.clean();
 			FPlayers.i.clean();
 		}
@@ -190,66 +190,66 @@ public class Factions extends EntityCollection<Faction>
 		return super.get(id);
 	}
 	
-	public Faction getNone()
+	public guild getNone()
 	{
 		return this.get("0");
 	}
 	
 	//----------------------------------------------//
-	// Faction tag
+	// guild tag
 	//----------------------------------------------//
 	
 	public static ArrayList<String> validateTag(String str)
 	{
 		ArrayList<String> errors = new ArrayList<String>();
 		
-		if(MiscUtil.getComparisonString(str).length() < Conf.factionTagLengthMin)
+		if(MiscUtil.getComparisonString(str).length() < Conf.guildTagLengthMin)
 		{
-			errors.add(P.p.txt.parse("<i>The faction tag can't be shorter than <h>%s<i> chars.", Conf.factionTagLengthMin));
+			errors.add(P.p.txt.parse("<i>The guild tag can't be shorter than <h>%s<i> chars.", Conf.guildTagLengthMin));
 		}
 		
-		if(str.length() > Conf.factionTagLengthMax)
+		if(str.length() > Conf.guildTagLengthMax)
 		{
-			errors.add(P.p.txt.parse("<i>The faction tag can't be longer than <h>%s<i> chars.", Conf.factionTagLengthMax));
+			errors.add(P.p.txt.parse("<i>The guild tag can't be longer than <h>%s<i> chars.", Conf.guildTagLengthMax));
 		}
 		
 		for (char c : str.toCharArray())
 		{
 			if ( ! MiscUtil.substanceChars.contains(String.valueOf(c)))
 			{
-				errors.add(P.p.txt.parse("<i>Faction tag must be alphanumeric. \"<h>%s<i>\" is not allowed.", c));
+				errors.add(P.p.txt.parse("<i>guild tag must be alphanumeric. \"<h>%s<i>\" is not allowed.", c));
 			}
 		}
 		
 		return errors;
 	}
 	
-	public Faction getByTag(String str)
+	public guild getByTag(String str)
 	{
 		String compStr = MiscUtil.getComparisonString(str);
-		for (Faction faction : this.get())
+		for (guild guild : this.get())
 		{
-			if (faction.getComparisonTag().equals(compStr))
+			if (guild.getComparisonTag().equals(compStr))
 			{
-				return faction;
+				return guild;
 			}
 		}
 		return null;
 	}
 	
-	public Faction getBestTagMatch(String searchFor)
+	public guild getBestTagMatch(String searchFor)
 	{
-		Map<String, Faction> tag2faction = new HashMap<String, Faction>();
+		Map<String, guild> tag2guild = new HashMap<String, guild>();
 		
 		// TODO: Slow index building
-		for (Faction faction : this.get())
+		for (guild guild : this.get())
 		{
-			tag2faction.put(ChatColor.stripColor(faction.getTag()), faction);
+			tag2guild.put(ChatColor.stripColor(guild.getTag()), guild);
 		}
 		
-		String tag = TextUtil.getBestStartWithCI(tag2faction.keySet(), searchFor);
+		String tag = TextUtil.getBestStartWithCI(tag2guild.keySet(), searchFor);
 		if (tag == null) return null;
-		return tag2faction.get(tag);
+		return tag2guild.get(tag);
 	}
 	
 	public boolean isTagTaken(String str)
