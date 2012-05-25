@@ -1,20 +1,20 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.FPerm;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.FPerm;
 
 public abstract class CapeCommand extends FCommand
 {
-	public Faction capeFaction;
+	public guild capeguild;
 	public String currentCape;
 	
 	public CapeCommand()
 	{
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		
 		this.disableOnLock = true;
 		
@@ -30,22 +30,22 @@ public abstract class CapeCommand extends FCommand
 		if ( ! super.validCall(sender, args)) return false;
 		
 	
-		this.capeFaction = null;
+		this.capeguild = null;
 		this.currentCape = null;
 		
-		if (this.myFaction == null && ! this.argIsSet(this.requiredArgs.size()))
+		if (this.myguild == null && ! this.argIsSet(this.requiredArgs.size()))
 		{
-			msg("<b>You must specify a faction from console.");
+			msg("<b>You must specify a guild from console.");
 			return false;
 		}
 		
-		this.capeFaction = this.argAsFaction(this.requiredArgs.size(), this.myFaction);
-		if (this.capeFaction == null) return false;
+		this.capeguild = this.argAsguild(this.requiredArgs.size(), this.myguild);
+		if (this.capeguild == null) return false;
 		
-		// Do we have permission to manage the cape of that faction? 
-		if (fme != null && ! FPerm.CAPE.has(fme, capeFaction)) return false;
+		// Do we have permission to manage the cape of that guild? 
+		if (fme != null && ! FPerm.CAPE.has(fme, capeguild)) return false;
 		
-		this.currentCape = this.capeFaction.getCape();
+		this.currentCape = this.capeguild.getCape();
 		
 		return true;
 	}
