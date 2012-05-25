@@ -1,7 +1,7 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.P;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.P;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdCape extends FCommand
 {
