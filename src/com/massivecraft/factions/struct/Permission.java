@@ -1,7 +1,7 @@
-package com.massivecraft.factions.struct;
+package com.massivecraft.guilds.struct;
 
 import org.bukkit.command.CommandSender;
-import com.massivecraft.factions.P;
+import com.massivecraft.guilds.P;
 
 public enum Permission
 {
@@ -66,7 +66,7 @@ public enum Permission
 	
 	Permission(final String node)
 	{
-		this.node = "factions."+node;
+		this.node = "guilds."+node;
 	}
 	
 	public boolean has(CommandSender sender, boolean informSenderIfNot)
