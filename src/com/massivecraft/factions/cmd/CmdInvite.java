@@ -1,9 +1,9 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.struct.FPerm;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.struct.FPerm;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdInvite extends FCommand
 {
@@ -31,22 +31,22 @@ public class CmdInvite extends FCommand
 		FPlayer you = this.argAsBestFPlayerMatch(0);
 		if (you == null) return;
 		
-		if (you.getFaction() == myFaction)
+		if (you.getguild() == myguild)
 		{
-			msg("%s<i> is already a member of %s", you.getName(), myFaction.getTag());
+			msg("%s<i> is already a member of %s", you.getName(), myguild.getTag());
 			msg("<i>You might want to: " +  p.cmdBase.cmdKick.getUseageTemplate(false));
 			return;
 		}
 
-		if (fme != null && ! FPerm.INVITE.has(fme, myFaction)) return;
+		if (fme != null && ! FPerm.INVITE.has(fme, myguild)) return;
 		
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
 		if ( ! payForCommand(Conf.econCostInvite, "to invite someone", "for inviting someone")) return;
 
-		myFaction.invite(you);
+		myguild.invite(you);
 		
-		you.msg("%s<i> invited you to %s", fme.describeTo(you, true), myFaction.describeTo(you));
-		myFaction.msg("%s<i> invited %s<i> to your faction.", fme.describeTo(myFaction, true), you.describeTo(myFaction));
+		you.msg("%s<i> invited you to %s", fme.describeTo(you, true), myguild.describeTo(you));
+		myguild.msg("%s<i> invited %s<i> to your guild.", fme.describeTo(myguild, true), you.describeTo(myguild));
 	}
 	
 }
