@@ -1,18 +1,18 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.struct.Rel;
-import com.massivecraft.factions.zcore.util.TextUtil;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.FPlayer;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.struct.Rel;
+import com.massivecraft.guilds.zcore.util.TextUtil;
 
 public class CmdShow extends FCommand
 {
@@ -22,7 +22,7 @@ public class CmdShow extends FCommand
 		this.aliases.add("who");
 		
 		//this.requiredArgs.add("");
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		
 		this.permission = Permission.SHOW.node;
 		this.disableOnLock = false;
@@ -36,45 +36,45 @@ public class CmdShow extends FCommand
 	@Override
 	public void perform()
 	{
-		Faction faction = myFaction;
+		guild guild = myguild;
 		if (this.argIsSet(0))
 		{
-			faction = this.argAsFaction(0);
-			if (faction == null) return;
+			guild = this.argAsguild(0);
+			if (guild == null) return;
 		}
 
 		// if economy is enabled, they're not on the bypass list, and this command has a cost set, make 'em pay
-		if ( ! payForCommand(Conf.econCostShow, "to show faction information", "for showing faction information")) return;
+		if ( ! payForCommand(Conf.econCostShow, "to show guild information", "for showing guild information")) return;
 
-		Collection<FPlayer> admins = faction.getFPlayersWhereRole(Rel.LEADER);
-		Collection<FPlayer> mods = faction.getFPlayersWhereRole(Rel.OFFICER);
-		Collection<FPlayer> normals = faction.getFPlayersWhereRole(Rel.MEMBER);
+		Collection<FPlayer> admins = guild.getFPlayersWhereRole(Rel.LEADER);
+		Collection<FPlayer> mods = guild.getFPlayersWhereRole(Rel.OFFICER);
+		Collection<FPlayer> normals = guild.getFPlayersWhereRole(Rel.MEMBER);
 		
-		msg(p.txt.titleize(faction.getTag(fme)));
-		msg("<a>Description: <i>%s", faction.getDescription());
+		msg(p.txt.titleize(guild.getTag(fme)));
+		msg("<a>Description: <i>%s", guild.getDescription());
 		
 		// Display important flags
 		// TODO: Find the non default flags, and display them instead.
-		if (faction.getFlag(FFlag.PERMANENT))
+		if (guild.getFlag(FFlag.PERMANENT))
 		{
-			msg("<a>This faction is permanent - remaining even with no members.");
+			msg("<a>This guild is permanent - remaining even with no members.");
 		}
 		
-		if (faction.getFlag(FFlag.PEACEFUL))
+		if (guild.getFlag(FFlag.PEACEFUL))
 		{
-			msg("<a>This faction is peaceful - in truce with everyone.");
+			msg("<a>This guild is peaceful - in truce with everyone.");
 		}
 		
-		msg("<a>Joining: <i>"+(faction.getOpen() ? "no invitation is needed" : "invitation is required"));
+		msg("<a>Joining: <i>"+(guild.getOpen() ? "no invitation is needed" : "invitation is required"));
 
-		double powerBoost = faction.getPowerBoost();
+		double powerBoost = guild.getPowerBoost();
 		String boost = (powerBoost == 0.0) ? "" : (powerBoost > 0.0 ? " (bonus: " : " (penalty: ") + powerBoost + ")";
-		msg("<a>Land / Power / Maxpower: <i> %d/%d/%d %s", faction.getLandRounded(), faction.getPowerRounded(), faction.getPowerMaxRounded(), boost);
+		msg("<a>Land / Power / Maxpower: <i> %d/%d/%d %s", guild.getLandRounded(), guild.getPowerRounded(), guild.getPowerMaxRounded(), boost);
 
 		// show the land value
 		if (Econ.shouldBeUsed())
 		{
-			double value = Econ.calculateTotalLandValue(faction.getLandRounded());
+			double value = Econ.calculateTotalLandValue(guild.getLandRounded());
 			double refund = value * Conf.econClaimRefundMultiplier;
 			if (value > 0)
 			{
@@ -86,16 +86,16 @@ public class CmdShow extends FCommand
 			//Show bank contents
 			if(Conf.bankEnabled)
 			{
-				msg("<a>Bank contains: <i>"+Econ.moneyString(Econ.getBalance(faction.getAccountId())));
+				msg("<a>Bank contains: <i>"+Econ.moneyString(Econ.getBalance(guild.getAccountId())));
 			}
 		}
 
 		String sepparator = p.txt.parse("<i>")+", ";
 		
-		// List the relations to other factions
-		Map<Rel, List<String>> relationTags = faction.getFactionTagsPerRelation(fme);
+		// List the relations to other guilds
+		Map<Rel, List<String>> relationTags = guild.getguildTagsPerRelation(fme);
 		
-		if (faction.getFlag(FFlag.PEACEFUL))
+		if (guild.getFlag(FFlag.PEACEFUL))
 		{
 			sendMessage(p.txt.parse("<a>In Truce with:<i> *everyone*"));
 		}
