@@ -1,10 +1,10 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Board;
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Factions;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.Board;
+import com.massivecraft.guilds.Conf;
+import com.massivecraft.guilds.FPlayers;
+import com.massivecraft.guilds.guilds;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdSaveAll extends FCommand
 {
@@ -31,10 +31,10 @@ public class CmdSaveAll extends FCommand
 	public void perform()
 	{
 		FPlayers.i.saveToDisc();
-		Factions.i.saveToDisc();
+		guilds.i.saveToDisc();
 		Board.save();
 		Conf.save();
-		msg("<i>Factions saved to disk!");
+		msg("<i>guilds saved to disk!");
 	}
 	
 }
