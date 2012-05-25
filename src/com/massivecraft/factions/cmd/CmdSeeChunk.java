@@ -1,11 +1,11 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.util.VisualizeUtil;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.util.VisualizeUtil;
 
 public class CmdSeeChunk extends FCommand
 {
