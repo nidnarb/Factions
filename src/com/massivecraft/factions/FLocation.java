@@ -1,4 +1,4 @@
-package com.massivecraft.factions;
+package com.massivecraft.guilds;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -10,7 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.massivecraft.factions.util.MiscUtil;
+import com.massivecraft.guilds.util.MiscUtil;
 
 public class FLocation
 {
