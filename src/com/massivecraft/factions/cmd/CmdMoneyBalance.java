@@ -1,8 +1,8 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.integration.Econ;
-import com.massivecraft.factions.struct.Permission;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.guilds.integration.Econ;
+import com.massivecraft.guilds.struct.Permission;
+import com.massivecraft.guilds.guild;
 
 public class CmdMoneyBalance extends FCommand
 {
@@ -13,10 +13,10 @@ public class CmdMoneyBalance extends FCommand
 		this.aliases.add("balance");
 		
 		//this.requiredArgs.add("");
-		this.optionalArgs.put("faction", "your");
+		this.optionalArgs.put("guild", "your");
 		
 		this.permission = Permission.MONEY_BALANCE.node;
-		this.setHelpShort("show faction balance");
+		this.setHelpShort("show guild balance");
 		
 		senderMustBePlayer = false;
 		senderMustBeMember = false;
@@ -27,16 +27,16 @@ public class CmdMoneyBalance extends FCommand
 	@Override
 	public void perform()
 	{
-		Faction faction = myFaction;
+		guild guild = myguild;
 		if (this.argIsSet(0))
 		{
-			faction = this.argAsFaction(0);
+			guild = this.argAsguild(0);
 		}
 			
-		if (faction == null) return;
-		if (faction != myFaction && ! Permission.MONEY_BALANCE_ANY.has(sender, true)) return;
+		if (guild == null) return;
+		if (guild != myguild && ! Permission.MONEY_BALANCE_ANY.has(sender, true)) return;
 		
-		Econ.sendBalanceInfo(fme, faction);
+		Econ.sendBalanceInfo(fme, guild);
 	}
 	
 }
