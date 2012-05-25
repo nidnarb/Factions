@@ -1,8 +1,8 @@
-package com.massivecraft.factions.cmd;
+package com.massivecraft.guilds.cmd;
 
-import com.massivecraft.factions.Faction;
-import com.massivecraft.factions.struct.FFlag;
-import com.massivecraft.factions.struct.Permission;
+import com.massivecraft.guilds.guild;
+import com.massivecraft.guilds.struct.FFlag;
+import com.massivecraft.guilds.struct.Permission;
 
 public class CmdFlag extends FCommand
 {
@@ -29,29 +29,29 @@ public class CmdFlag extends FCommand
 	@Override
 	public void perform()
 	{
-		Faction faction = myFaction;
+		guild guild = myguild;
 		if (this.argIsSet(0))
 		{
-			faction = this.argAsFaction(0);
+			guild = this.argAsguild(0);
 		}
-		if (faction == null) return;
+		if (guild == null) return;
 		
 		if ( ! this.argIsSet(1))
 		{
-			msg(p.txt.titleize("Flags for " + faction.describeTo(fme, true)));
+			msg(p.txt.titleize("Flags for " + guild.describeTo(fme, true)));
 			for (FFlag flag : FFlag.values())
 			{
-				msg(flag.getStateInfo(faction.getFlag(flag), true));
+				msg(flag.getStateInfo(guild.getFlag(flag), true));
 			}
 			return;
 		}
 		
-		FFlag flag = this.argAsFactionFlag(1);
+		FFlag flag = this.argAsguildFlag(1);
 		if (flag == null) return;
 		if ( ! this.argIsSet(2))
 		{
-			msg(p.txt.titleize("Flag for " + faction.describeTo(fme, true)));
-			msg(flag.getStateInfo(faction.getFlag(flag), true));
+			msg(p.txt.titleize("Flag for " + guild.describeTo(fme, true)));
+			msg(flag.getStateInfo(guild.getFlag(flag), true));
 			return;
 		}
 		
@@ -62,9 +62,9 @@ public class CmdFlag extends FCommand
 		if ( ! Permission.FLAG_SET.has(sender, true)) return;
 		
 		// Do the change
-		msg(p.txt.titleize("Flag for " + faction.describeTo(fme, true)));
-		faction.setFlag(flag, targetValue);
-		msg(flag.getStateInfo(faction.getFlag(flag), true));
+		msg(p.txt.titleize("Flag for " + guild.describeTo(fme, true)));
+		guild.setFlag(flag, targetValue);
+		msg(flag.getStateInfo(guild.getFlag(flag), true));
 	}
 	
 }
